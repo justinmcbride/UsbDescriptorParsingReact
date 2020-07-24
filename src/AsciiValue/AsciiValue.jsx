@@ -13,12 +13,22 @@ class AsciiValue extends React.Component {
       editVisible: true
     };
   }
+
+  getDisplayValue() {
+    const value = this.state.value;
+    if( 32 <= value && value <= 126 ) {
+      return String.fromCharCode( this.state.value )
+    }
+    else {
+      return ".";
+    }
+  }
   
   
   render() {
     return (
       <Col>
-        <span> { String.fromCharCode( this.state.value ) }</span>
+        <span> { this.getDisplayValue() }</span>
       </Col>
     );
   }
