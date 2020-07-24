@@ -12,14 +12,33 @@ class App extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      whichHovered: {
+        row: null,
+        column: null
+      },
+    };
   }
 
-  onMouseEnter(row, column) {
+  onMouseEnter = (row, column) => {
     console.log( `app informed of mouseEnter on [${row},${column}]`);
+    this.setState( {
+      whichHovered: {
+        row: row,
+        column: column
+      },
+    });
   }
 
-  onMouseLeave(row, column) {
+  onMouseLeave = (row, column) => {
+    // possible race condition here i guess?
     console.log( `app informed of mouseLeave on [${row},${column}]`);
+    this.setState( {
+      whichHovered: {
+        row: null,
+        column: null
+      },
+    });
   }
   
   render() {
@@ -50,9 +69,10 @@ class App extends React.Component {
     );
   }
 
-  hexline(index, values) {
+  hexline = (index, values) => {
     return (
       <HexLine
+        key = { index }
         index = { index }
         values = { values }
         mouseEnter = { this.onMouseEnter }
@@ -61,10 +81,13 @@ class App extends React.Component {
     );
   }
   
-  asciiLine(index, values) {
+  asciiLine = (index, values) => {
     return (
       <AsciiLine
+        key = { index }
+        index = { index }
         values = { values }
+        whichHovered = { this.state.whichHovered }
       />
     );
   }

@@ -49,10 +49,11 @@ class HexLine extends React.Component {
   createHexValue(itemIndex) {
     return (
       <HexValue
-        index={ itemIndex }
-        value={ this.state.values[itemIndex] }
-        mouseEnter={ this.onMouseEnter }
-        mouseLeave={ this.onMouseLeave }
+        key = { itemIndex }
+        index = { itemIndex }
+        value = { this.state.values[itemIndex] }
+        mouseEnter = { this.onMouseEnter }
+        mouseLeave = { this.onMouseLeave }
       />
     );
   }
