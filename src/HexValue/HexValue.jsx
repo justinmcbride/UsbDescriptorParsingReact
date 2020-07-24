@@ -11,7 +11,8 @@ class HexValue extends React.Component {
     super(props);
     this.state = {
       value: props.value,
-      editVisible: true
+      editEnabled: true,
+      hovered: false
     };
 
     this.index = props.index;
@@ -20,35 +21,48 @@ class HexValue extends React.Component {
     this.mouseLeave = props.mouseLeave;    
   }
   
-  valueUp() {
+  valueUp = () => {
     this.setState( { value: this.state.value + 1 } );
   }
   
-  valueDown() {
+  valueDown = () => {
     this.setState( { value: this.state.value - 1 } );
   }
   
-  changeVisibility() {
-    var editVisible = this.state.editVisible ? false : true;
-    this.setState({ editVisible: editVisible });
+  toggleEditable = () => {
+    var editEnabled = this.state.editEnabled ? false : true;
+    this.setState({ editEnabled: editEnabled });
   }
 
-  onMouseEnter() {
-    console.log( `value enter: index=${this.index}` );
+  onMouseEnter = () => {
+    // console.log( `value enter: index=${this.index} value=${this.state.value.toString(16)}` );
+    this.setState( {
+      hovered: true
+    });
     this.mouseEnter( this.index );
   }
 
-  onMouseLeave() {
-    console.log( `value leave: index=${this.index}` );
+  onMouseLeave = () => {
+    // console.log( `value leave: index=${this.index} value=${this.state.value.toString(16)}` );
+    this.setState( {
+      hovered: false
+    });
     this.mouseLeave( this.index );
+  }
+
+  getClassName = () => {
+    if( this.state.hovered === true ) {
+      return "HoveredValue";
+    }
+    return "";
   }
   
   render() {
     return (
-      <Col onMouseEnter={ () => this.onMouseEnter() } onMouseLeave={ () => this.onMouseLeave() }>
-        <Button variant="danger" size="sm" disabled={this.state.editVisible} onClick={ () => this.valueDown() }>🡓</Button>
-        <span onClick={ () => this.changeVisibility() }>0x{this.state.value.toString(16)}</span>
-        <Button variant="success" size="sm" disabled={this.state.editVisible} onClick={ () => this.valueUp() } >🡑</Button>
+      <Col onMouseOver={ this.onMouseEnter } onMouseOut={ this.onMouseLeave } className={ this.getClassName() }>
+        {/* <Button variant="danger" size="sm" disabled={this.state.editEnabled} onClick={ () => this.valueDown() }>🡓</Button> */}
+        <span onClick={ () => this.toggleEditable() }>0x{this.state.value.toString(16)}</span>
+        {/* <Button variant="success" size="sm" disabled={this.state.editEnabled} onClick={ () => this.valueUp() } >🡑</Button> */}
       </Col>
     );
   }

@@ -2,6 +2,7 @@ import React from 'react';
 
 import Row from 'react-bootstrap/Row';
 
+import './HexLine.css';
 import HexValue from '../HexValue/HexValue';
 
 class HexLine extends React.Component {
@@ -10,7 +11,7 @@ class HexLine extends React.Component {
     this.state = {
       index: props.index,
       values: props.values,
-      hovered: true,
+      hovered: false,
     };
 
     this.mouseEnter = props.mouseEnter;
@@ -18,16 +19,16 @@ class HexLine extends React.Component {
   }
 
   onMouseEnter = (itemIndex) => {
-    console.log( `line enter: index=${this.index} itemIndex=${itemIndex}` );
-    // this.mouseEnter( this.index, itemIndex );
+    // console.log( `line enter: index=${this.state.index} itemIndex=${itemIndex}` );
+    this.mouseEnter( this.state.index, itemIndex );
     this.setState( {
       hovered: true,
     });
   }
 
   onMouseLeave = (itemIndex) => {
-    console.log( `line leave: index=${this.index} itemIndex=${itemIndex}` );
-    // this.mouseLeave( this.index, itemIndex );
+    // console.log( `line leave: index=${this.state.index} itemIndex=${itemIndex}` );
+    this.mouseLeave( this.state.index, itemIndex );
     this.setState( {
       hovered: false,
     });

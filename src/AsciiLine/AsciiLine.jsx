@@ -2,6 +2,7 @@ import React from 'react';
 
 import Row from 'react-bootstrap/Row';
 
+import './AsciiLine.css';
 import AsciiValue from '../AsciiValue/AsciiValue';
 
 class AsciiLine extends React.Component {
