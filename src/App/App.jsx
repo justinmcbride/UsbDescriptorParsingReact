@@ -53,8 +53,8 @@ class App extends React.Component {
       const newValues = [];
       values.map( value => newValues.push( value + offset ) );
     
-      hexRows.push( this.hexline(rowIndex, newValues) );
-      asciiRows.push( this.asciiLine(rowIndex, newValues) );
+      hexRows.push( this.createHexLine(rowIndex, newValues) );
+      asciiRows.push( this.createAsciiLine(rowIndex, newValues) );
     }
     
     return (
@@ -69,25 +69,28 @@ class App extends React.Component {
     );
   }
 
-  hexline = (index, values) => {
+  createHexLine = (index, values) => {
     return (
       <HexLine
         key = { index }
         index = { index }
         values = { values }
+        whichHovered = { this.state.whichHovered }
         mouseEnter = { this.onMouseEnter }
         mouseLeave = { this.onMouseLeave }
       />
     );
   }
   
-  asciiLine = (index, values) => {
+  createAsciiLine = (index, values) => {
     return (
       <AsciiLine
         key = { index }
         index = { index }
         values = { values }
         whichHovered = { this.state.whichHovered }
+        mouseEnter = { this.onMouseEnter }
+        mouseLeave = { this.onMouseLeave }
       />
     );
   }

@@ -8,53 +8,37 @@ import HexValue from '../HexValue/HexValue';
 class HexLine extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      index: props.index,
-      values: props.values,
-      hovered: false,
-    };
-
-    this.mouseEnter = props.mouseEnter;
-    this.mouseLeave = props.mouseLeave;
   }
 
   onMouseEnter = (itemIndex) => {
-    // console.log( `line enter: index=${this.state.index} itemIndex=${itemIndex}` );
-    this.mouseEnter( this.state.index, itemIndex );
-    this.setState( {
-      hovered: true,
-    });
+    this.props.mouseEnter( this.props.index, itemIndex );
   }
 
   onMouseLeave = (itemIndex) => {
-    // console.log( `line leave: index=${this.state.index} itemIndex=${itemIndex}` );
-    this.mouseLeave( this.state.index, itemIndex );
-    this.setState( {
-      hovered: false,
-    });
+    this.props.mouseLeave( this.props.index, itemIndex );
   }
   
   render() {
+    // Create all of the individual values
     const valueItems = [];
-    for( let itemIndex = 0; itemIndex < this.state.values.length; itemIndex++ ) {
-      valueItems.push( this.createHexValue( itemIndex ) );
+    for( let itemIndex = 0; itemIndex < this.props.values.length; itemIndex++ ) {
+      valueItems.push(
+        <HexValue
+          key = { itemIndex }
+          index = { itemIndex }
+          value = { this.props.values[itemIndex] }
+          hovered = { this.props.whichHovered.row == this.props.index && this.props.whichHovered.column == itemIndex }
+          mouseEnter = { this.onMouseEnter }
+          mouseLeave = { this.onMouseLeave }
+        />
+      );
     }
+
+    // Render them
     return (
-      <Row className = { this.state.hovered ? "Hovered" : "NotHovered" }>
+      <Row className = { this.props.whichHovered.row == this.props.index ? "Hovered" : "NotHovered" }>
         { valueItems }
       </Row>
-    );
-  }
-
-  createHexValue(itemIndex) {
-    return (
-      <HexValue
-        key = { itemIndex }
-        index = { itemIndex }
-        value = { this.state.values[itemIndex] }
-        mouseEnter = { this.onMouseEnter }
-        mouseLeave = { this.onMouseLeave }
-      />
     );
   }
 }

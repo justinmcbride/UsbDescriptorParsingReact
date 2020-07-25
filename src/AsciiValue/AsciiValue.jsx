@@ -23,12 +23,28 @@ class AsciiValue extends React.Component {
       return ".";
     }
   }
-  
+
+  onMouseEnter = () => {
+    // console.log( `value enter: index=${this.index} value=${this.state.value.toString(16)}` );
+    this.props.mouseEnter( this.props.index );
+  }
+
+  onMouseLeave = () => {
+    // console.log( `value leave: index=${this.index} value=${this.state.value.toString(16)}` );
+    this.props.mouseLeave( this.props.index );
+  }
+
+  getClassName = () => {
+    if( this.props.hovered ) {
+      return "HoveredValue";
+    }
+    return "";
+  }
   
   render() {
     return (
-      <Col>
-        <span> { this.getDisplayValue() }</span>
+      <Col onMouseOver={ this.onMouseEnter } onMouseOut={ this.onMouseLeave } className={ this.getClassName() }>
+        <span>{ this.getDisplayValue() }</span>
       </Col>
     );
   }

@@ -10,24 +10,25 @@ class AsciiLine extends React.Component {
     super(props);
     this.state = {
       index: props.index,
-      values: props.values,
-      whichHovered: props.whichHovered
+      values: props.values
     };
   }
 
-  componentWillReceiveProps(nextProps){
-    if(nextProps.whichHovered !== this.props.whichHovered){
-        this.setState({whichHovered:nextProps.whichHovered});
-    }
-}
-  
+  onMouseEnter = (itemIndex) => {
+    this.props.mouseEnter( this.state.index, itemIndex );
+  }
+
+  onMouseLeave = (itemIndex) => {
+    this.props.mouseLeave( this.state.index, itemIndex );
+  }
+
   render() {
     const valueItems = [];
     for( let itemIndex = 0; itemIndex < this.state.values.length; itemIndex++ ) {
       valueItems.push( this.createValue( itemIndex ) );
     }
     return (
-      <Row className = { this.state.whichHovered.row == this.state.index ? "Hovered" : "NotHovered" }>
+      <Row className = { this.props.whichHovered.row == this.state.index ? "Hovered" : "NotHovered" }>
         { valueItems }
       </Row>
     );
@@ -39,8 +40,9 @@ class AsciiLine extends React.Component {
         key = { itemIndex }
         index = { itemIndex }
         value = { this.state.values[itemIndex] }
-        // mouseEnter={ this.onMouseEnter }
-        // mouseLeave={ this.onMouseLeave }
+        hovered = { this.props.whichHovered.row == this.state.index && this.props.whichHovered.column == itemIndex }
+        mouseEnter = { this.onMouseEnter }
+        mouseLeave = { this.onMouseLeave }
       />
     );
   }

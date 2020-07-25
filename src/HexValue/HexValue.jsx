@@ -11,14 +11,8 @@ class HexValue extends React.Component {
     super(props);
     this.state = {
       value: props.value,
-      editEnabled: true,
-      hovered: false
+      editEnabled: true
     };
-
-    this.index = props.index;
-
-    this.mouseEnter = props.mouseEnter;
-    this.mouseLeave = props.mouseLeave;    
   }
   
   valueUp = () => {
@@ -36,22 +30,16 @@ class HexValue extends React.Component {
 
   onMouseEnter = () => {
     // console.log( `value enter: index=${this.index} value=${this.state.value.toString(16)}` );
-    this.setState( {
-      hovered: true
-    });
-    this.mouseEnter( this.index );
+    this.props.mouseEnter( this.props.index );
   }
 
   onMouseLeave = () => {
     // console.log( `value leave: index=${this.index} value=${this.state.value.toString(16)}` );
-    this.setState( {
-      hovered: false
-    });
-    this.mouseLeave( this.index );
+    this.props.mouseLeave( this.props.index );
   }
 
   getClassName = () => {
-    if( this.state.hovered === true ) {
+    if( this.props.hovered ) {
       return "HoveredValue";
     }
     return "";
