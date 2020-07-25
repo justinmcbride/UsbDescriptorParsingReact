@@ -1,0 +1,11 @@
+.ValueHovered {
+  border: 5px solid black;
+}
+
+.ValueNotHovered {
+  border: 5px solid transparent;
+}
+
+.Value {
+  text-align: center;
+}
