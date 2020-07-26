@@ -42,6 +42,26 @@ const App = () => {
     );
   };
 
+  const makeRows = (dataStyle) => {
+    const itemsPerRow = 8; // TODO: window.clientWidth / fontSize / 0x00 4 char
+    const rowCount = Math.ceil(values.length / itemsPerRow);
+    const rowIndexes = [...Array(rowCount).keys()]; // range()
+
+    return rowIndexes.map( rowIdx => {
+      const startIdx = rowIdx * itemsPerRow;
+      const endIdx = Math.min(startIdx + itemsPerRow, values.length);
+
+      const rowClassName = ( whichHovered >= startIdx && whichHovered < endIdx ) ? "DataRow RowHovered" : "DataRow RowNowHovered";
+
+      // return makeColumns(values.slice(startIdx, endIdx), startIdx, dataStyle);
+      return (
+        <div className = { rowClassName }>
+          { makeColumns(values.slice(startIdx, endIdx), startIdx, dataStyle) }
+        </div>
+      );
+    })
+  }
+
   const makeColumns = (values, baseIdx, dataStyle) => {
     return values.map( (value, colIdx) => {
       const actualIndex = baseIdx + colIdx;
@@ -58,32 +78,18 @@ const App = () => {
     });
   };
 
-  const itemsPerRow = 8; // TODO: window.clientWidth / fontSize / 0x00 4 char
-  const rowCount = Math.ceil(values.length / itemsPerRow);
-  const rowIndexes = [...Array(rowCount).keys()]; // range()
-
   return (
     <div id="tableContainer">
       <div className="hexContainer">
         <h1>Hexadecimal</h1>
         <div className="dataContainer">
-          {rowIndexes.map( rowIdx => {
-            const startIdx = rowIdx * itemsPerRow;
-            const endIdx = Math.min(startIdx + itemsPerRow, values.length);   
-            
-            return makeColumns(values.slice(startIdx, endIdx), startIdx, "hex");
-          })}
+          { makeRows("hex") }
         </div>
       </div>
       <div className="asciiContainer">
         <h1>ASCII</h1>
         <div className="dataContainer">
-          {rowIndexes.map( rowIdx => {
-            const startIdx = rowIdx * itemsPerRow;
-            const endIdx = Math.min(startIdx + itemsPerRow, values.length);   
-            
-            return makeColumns(values.slice(startIdx, endIdx), startIdx, "ascii");
-          })}
+          { makeRows("ascii") }
         </div>
       </div>
     </div>

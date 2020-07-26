@@ -29,3 +29,16 @@ h1 {
 html, body, #root {
   height: 100%
 }
+
+.RowHovered {
+  background-color: #efefef
+}
+
+.RowNotHovered {
+  background-color: transparent;
+}
+
+.DataRow {
+  display: flex;
+  flex-direction: row;
+}
