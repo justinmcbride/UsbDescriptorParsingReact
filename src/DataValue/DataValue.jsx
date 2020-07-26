@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 
-import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
-
 import './DataValue.css';
 
-const DataValue = ( { index, style, value, mouseEnter, mouseLeave, valueChanged, hovered } ) => {
+// const DISABLE_BUTTONS = true;
+const DISABLE_BUTTONS = false;
+
+const DataValue = ( { index, dataStyle, value, mouseEnter, mouseLeave, valueChanged, hovered } ) => {
   const [editEnabled, setEditEnabled] = useState(false);
 
-  const className = hovered ? "Value ValueHovered" : "Value ValueNotHovered";
+  let className = hovered ? "Value ValueHovered " : "Value ValueNotHovered ";
+  className += ( dataStyle === "ascii" ? "ValueAscii" : "ValueHex" );
   
   const getDisplayValue = () => {
-    if( style == "hex" ) {
+    if( dataStyle === "hex" ) {
       return `0x${ value.toString(16) }`;
     }
-    else if ( style == "ascii" ) {
+    else if ( dataStyle === "ascii" ) {
       if( 32 <= value && value <= 126 ) {
         return String.fromCharCode( value );
       }
@@ -38,23 +39,25 @@ const DataValue = ( { index, style, value, mouseEnter, mouseLeave, valueChanged,
   }
 
   const valueUp = () => {
-    valueChanged( value + 1 );
+    valueChanged( index, value + 1 );
   }
   
   const valueDown = () => {
-    valueChanged( value + 1 );
+    valueChanged( index, value - 1 );
   }
   
   const toggleEditable = () => {
     setEditEnabled( !editEnabled );
   }
 
+  const buttonStyle = ( dataStyle !== "hex" || DISABLE_BUTTONS ) ? { display: "none" } : {};
+
   return (
-    <Col onMouseOver={ onMouseEnter } onMouseOut={ onMouseLeave } className={ className }>
-      {/* <Button variant="danger" size="sm" disabled={this.state.editEnabled} onClick={ () => this.valueDown() }>🡓</Button> */}
-      <span onClick={ () => toggleEditable() }>{ getDisplayValue() }</span>
-      {/* <Button variant="success" size="sm" disabled={this.state.editEnabled} onClick={ () => this.valueUp() } >🡑</Button> */}
-    </Col>
+    <div onMouseOver={ onMouseEnter } onMouseOut={ onMouseLeave } className={ className }>
+      <button variant="danger" size="sm" disabled={ !editEnabled } style={ buttonStyle } onClick={ valueDown }>🡓</button>
+      <span onClick={ toggleEditable }>{ getDisplayValue() }</span>
+      <button variant="success" size="sm" disabled={ !editEnabled } style={ buttonStyle } onClick={ valueUp } >🡑</button>
+    </div>
   );
 }
 

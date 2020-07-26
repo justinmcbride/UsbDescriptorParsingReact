@@ -1,112 +1,93 @@
-import React from 'react';
-
-import Container from 'react-bootstrap/Container';
-import Tabs from 'react-bootstrap/Tabs';
-import Tab from 'react-bootstrap/Tab';
+import React, { useState } from 'react';
 
 import './App.css';
-import DataLine from '../DataLine/DataLine';
+import DataValue from '../DataValue/DataValue';
 
-const NUMBER_ROWS = 10;
-const NUMBERS_PER_ROW = 8;
-  
-class App extends React.Component {
+const NUMBER_OF_VALUES = 61;
 
-  constructor(props) {
-    super(props);
+const CreateFakeData = () => {
+  const data = [];
 
-    const allValues = [];
-    let currentValue = 33;
-    for( let row = 0; row < NUMBER_ROWS; ++row )
-    {
-      const rowValues = [];
-
-      for ( let column = 0; column < NUMBERS_PER_ROW; ++column ) {
-        if ( row == NUMBER_ROWS-1 && column == NUMBERS_PER_ROW-1 ) continue;
-        rowValues.push( currentValue++ );
-      }
-
-      allValues.push( rowValues );
-    }
-
-    this.state = {
-      values: allValues,
-      whichHovered: {
-        row: null,
-        column: null
-      },
-    };
+  const baseValue = 33;
+  for (let index = 0; index < NUMBER_OF_VALUES; ++index) {
+    data.push(baseValue + index);
   }
 
-  onMouseEnter = (row, column) => {
-    console.log( `app informed of mouseEnter on [${row},${column}]`);
-    this.setState({
-      whichHovered: {
-        row: row,
-        column: column
-      },
-    });
-  }
+  return data;
+}
 
-  onMouseLeave = (row, column) => {
+const App = () => {
+  // TODO: optimize setValues from setting full array
+  const [values, setValues] = useState(CreateFakeData());
+  const [whichHovered, setWhichHovered] = useState();
+
+  const onMouseEnter = (index) => {
+    // console.log( `app informed of mouseEnter on [${row},${column}]`);
+    setWhichHovered(index);
+  };
+
+  const onMouseLeave = (index) => {
     // possible race condition here i guess?
-    console.log( `app informed of mouseLeave on [${row},${column}]`);
-    this.setState( {
-      whichHovered: {
-        row: null,
-        column: null
-      },
+    // console.log( `app informed of mouseLeave on [${row},${column}]`);
+    setWhichHovered(index);
+  };
+
+  const valueChanged = (itemIndex, newValue) => {
+    setValues(
+      values.map( (originalValue, index) =>
+        index === itemIndex
+        ? newValue
+        : originalValue
+      )
+    );
+  };
+
+  const makeColumns = (values, baseIdx, dataStyle) => {
+    return values.map( (value, colIdx) => {
+      const actualIndex = baseIdx + colIdx;
+      return <DataValue
+        key = { actualIndex }
+        index = { actualIndex }
+        value = { value }
+        dataStyle = { dataStyle }
+        hovered = { whichHovered === actualIndex  }
+        mouseEnter = { onMouseEnter }
+        mouseLeave = { onMouseLeave }
+        valueChanged = { valueChanged }
+      />
     });
-  }
-  
-  render() {
-    const hexRows = [];
-    const asciiRows = [];
+  };
 
-    // return <div>
-    //   {Array(NUMBERS_PER_ROW).fill().map((it, idx) => {
-    //     <row></row>
-    //   })}      
-    // </div>;
+  const itemsPerRow = 8; // TODO: window.clientWidth / fontSize / 0x00 4 char
+  const rowCount = Math.ceil(values.length / itemsPerRow);
+  const rowIndexes = [...Array(rowCount).keys()]; // range()
 
-    for ( let rowIndex = 0; rowIndex < this.state.values.length; rowIndex++ )
-    {
-      const valueRow = this.state.values[rowIndex];
-      hexRows.push( this.createDataLine(rowIndex, valueRow, "hex") );
-      asciiRows.push( this.createDataLine(rowIndex, valueRow, "ascii") );
-    }
-    
-    return (
-      <div id="tableContainer">
-        <div>
-          <h1>Hexadecimal</h1>
-          <Container className="dataContainer">
-            { hexRows }
-          </Container>
-        </div>
-        <div>
-          <h1>ASCII</h1>
-          <Container className="dataContainer">
-            { asciiRows }
-          </Container>
+  return (
+    <div id="tableContainer">
+      <div className="hexContainer">
+        <h1>Hexadecimal</h1>
+        <div className="dataContainer">
+          {rowIndexes.map( rowIdx => {
+            const startIdx = rowIdx * itemsPerRow;
+            const endIdx = Math.min(startIdx + itemsPerRow, values.length);   
+            
+            return makeColumns(values.slice(startIdx, endIdx), startIdx, "hex");
+          })}
         </div>
       </div>
-    );
-  }
-
-  createDataLine = (index, values, style) => {
-    return (
-      <DataLine
-        key = { index }
-        index = { index }
-        values = { values }
-        style = { style }
-        whichHovered = { this.state.whichHovered }
-        mouseEnter = { this.onMouseEnter }
-        mouseLeave = { this.onMouseLeave }
-      />
-    );
-  }
+      <div className="asciiContainer">
+        <h1>ASCII</h1>
+        <div className="dataContainer">
+          {rowIndexes.map( rowIdx => {
+            const startIdx = rowIdx * itemsPerRow;
+            const endIdx = Math.min(startIdx + itemsPerRow, values.length);   
+            
+            return makeColumns(values.slice(startIdx, endIdx), startIdx, "ascii");
+          })}
+        </div>
+      </div>
+    </div>
+  );
 }
-    
+
 export default App;

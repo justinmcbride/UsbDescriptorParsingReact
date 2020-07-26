@@ -8,4 +8,14 @@
 
 .Value {
   text-align: center;
+  
+  padding: 5px;
+}
+
+.ValueAscii {
+  width: 75px;
+}
+
+.ValueHex {
+  width: 113px;
 }

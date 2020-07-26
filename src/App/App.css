@@ -1,6 +1,7 @@
 #tableContainer {
   display: flex;
   flex-direction: row;
+  height: 100%;
 }
 
 h1 {
@@ -9,4 +10,22 @@ h1 {
 
 .dataContainer {
   border: 3px solid black;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.hexContainer {
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+}
+
+.asciiContainer {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
+}
+
+html, body, #root {
+  height: 100%
 }
