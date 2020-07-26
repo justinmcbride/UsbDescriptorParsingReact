@@ -22,6 +22,7 @@ class App extends React.Component {
       const rowValues = [];
 
       for ( let column = 0; column < NUMBERS_PER_ROW; ++column ) {
+        if ( row == NUMBER_ROWS-1 && column == NUMBERS_PER_ROW-1 ) continue;
         rowValues.push( currentValue++ );
       }
 
@@ -61,6 +62,12 @@ class App extends React.Component {
   render() {
     const hexRows = [];
     const asciiRows = [];
+
+    // return <div>
+    //   {Array(NUMBERS_PER_ROW).fill().map((it, idx) => {
+    //     <row></row>
+    //   })}      
+    // </div>;
 
     for ( let rowIndex = 0; rowIndex < this.state.values.length; rowIndex++ )
     {

@@ -5,45 +5,41 @@ import Row from 'react-bootstrap/Row';
 import './DataLine.css';
 import DataValue from '../DataValue/DataValue';
 
-class DataLine extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+const DataLine = ( { mouseEnter, mouseLeave, index, values, style, whichHovered, valueChanged } ) => {
+  // const [blah, setBlah] = useState( false );
 
-  onMouseEnter = (itemIndex) => {
-    this.props.mouseEnter( this.props.index, itemIndex );
-  }
+  const onMouseEnter = (itemIndex) => {
+    mouseEnter( index, itemIndex );
+  };
 
-  onMouseLeave = (itemIndex) => {
-    this.props.mouseLeave( this.props.index, itemIndex );
-  }
+  const onMouseLeave = (itemIndex) => {
+    mouseLeave( index, itemIndex );
+  };
 
-  render() {
-    const valueItems = [];
-    for( let itemIndex = 0; itemIndex < this.props.values.length; itemIndex++ ) {
-      valueItems.push( this.createValue( itemIndex ) );
-    }
-    return (
-      <Row className = { this.props.whichHovered.row == this.props.index ? "RowHovered" : "RowNotHovered" }>
-        { valueItems }
-      </Row>
-    );
-  }
-
-  createValue = (itemIndex) => {
+  const createValue = (itemIndex) => {
     return (
       <DataValue
         key = { itemIndex }
         index = { itemIndex }
-        value = { this.props.values[itemIndex] }
-        style = { this.props.style }
-        hovered = { this.props.whichHovered.row == this.props.index && this.props.whichHovered.column == itemIndex }
-        mouseEnter = { this.onMouseEnter }
-        mouseLeave = { this.onMouseLeave }
-        valueChanged = { this.props.valueChanged }
+        value = { values[itemIndex] }
+        style = { style }
+        hovered = { whichHovered.row == index && whichHovered.column == itemIndex }
+        mouseEnter = { onMouseEnter }
+        mouseLeave = { onMouseLeave }
+        valueChanged = { valueChanged }
       />
     );
+  };
+
+  const valueItems = [];
+  for( let itemIndex = 0; itemIndex < values.length; itemIndex++ ) {
+    valueItems.push( createValue( itemIndex ) );
   }
+  return (
+    <Row className = { whichHovered.row == index ? "RowHovered" : "RowNotHovered" }>
+      { valueItems }
+    </Row>
+  );
 }
 
 export default DataLine;
