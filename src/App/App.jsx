@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import Dropzone from 'react-dropzone'
 
 import './App.css';
-import DataValue from '../DataValue/DataValue';
+import HexValue from '../HexValue/HexValue';
+import AsciiValue from '../AsciiValue/AsciiValue';
 
 const NUMBER_OF_VALUES = 61;
 
@@ -21,6 +23,24 @@ const App = () => {
   const [values, setValues] = useState(CreateFakeData());
   const [whichHovered, setWhichHovered] = useState();
 
+  const onDrop = useCallback((acceptedFiles) => {
+    acceptedFiles.forEach((file) => {
+      const reader = new FileReader();
+
+      reader.onabort = () => console.log('file reading was aborted');
+      reader.onerror = () => console.log('file reading has failed');
+      reader.onload = () => {
+      // Do whatever you want with the file contents
+        const byteArray = reader.result;
+        const typedArray = new Uint8Array(byteArray);
+        const array = [...typedArray];
+        setValues(array);
+      }
+      reader.readAsArrayBuffer(file);
+    })
+    
+  }, [])
+
   const onMouseEnter = (index) => {
     // console.log( `app informed of mouseEnter on [${row},${column}]`);
     setWhichHovered(index);
@@ -29,7 +49,7 @@ const App = () => {
   const onMouseLeave = (index) => {
     // possible race condition here i guess?
     // console.log( `app informed of mouseLeave on [${row},${column}]`);
-    setWhichHovered(index);
+    setWhichHovered(null);
   };
 
   const valueChanged = (itemIndex, newValue) => {
@@ -43,7 +63,7 @@ const App = () => {
   };
 
   const makeRows = (dataStyle) => {
-    const itemsPerRow = 8; // TODO: window.clientWidth / fontSize / 0x00 4 char
+    const itemsPerRow = 16; // TODO: window.clientWidth / fontSize / 0x00 4 char
     const rowCount = Math.ceil(values.length / itemsPerRow);
     const rowIndexes = [...Array(rowCount).keys()]; // range()
 
@@ -51,11 +71,10 @@ const App = () => {
       const startIdx = rowIdx * itemsPerRow;
       const endIdx = Math.min(startIdx + itemsPerRow, values.length);
 
-      const rowClassName = ( whichHovered >= startIdx && whichHovered < endIdx ) ? "DataRow RowHovered" : "DataRow RowNowHovered";
-
-      // return makeColumns(values.slice(startIdx, endIdx), startIdx, dataStyle);
+      const rowClassName = ( whichHovered && whichHovered >= startIdx && whichHovered < endIdx ) ? "DataRow RowHovered" : "DataRow RowNowHovered";
+    
       return (
-        <div className = { rowClassName }>
+        <div key = { rowIdx } className = { rowClassName }>
           { makeColumns(values.slice(startIdx, endIdx), startIdx, dataStyle) }
         </div>
       );
@@ -65,31 +84,57 @@ const App = () => {
   const makeColumns = (values, baseIdx, dataStyle) => {
     return values.map( (value, colIdx) => {
       const actualIndex = baseIdx + colIdx;
-      return <DataValue
-        key = { actualIndex }
-        index = { actualIndex }
-        value = { value }
-        dataStyle = { dataStyle }
-        hovered = { whichHovered === actualIndex  }
-        mouseEnter = { onMouseEnter }
-        mouseLeave = { onMouseLeave }
-        valueChanged = { valueChanged }
-      />
+      if ( dataStyle === "ascii" ) {
+        return <AsciiValue
+          key = { actualIndex }
+          index = { actualIndex }
+          value = { value }
+          dataStyle = { dataStyle }
+          hovered = { whichHovered === actualIndex  }
+          mouseEnter = { onMouseEnter }
+          mouseLeave = { onMouseLeave }
+          valueChanged = { valueChanged }
+        />
+      }
+      else if ( dataStyle === "hex" ) {
+        return <HexValue
+          key = { actualIndex }
+          index = { actualIndex }
+          value = { value }
+          dataStyle = { dataStyle }
+          hovered = { whichHovered === actualIndex  }
+          mouseEnter = { onMouseEnter }
+          mouseLeave = { onMouseLeave }
+          valueChanged = { valueChanged }
+        />
+      }
     });
   };
 
   return (
-    <div id="tableContainer">
-      <div className="hexContainer">
-        <h1>Hexadecimal</h1>
-        <div className="dataContainer">
-          { makeRows("hex") }
+    <div>
+      <Dropzone onDrop={onDrop}>
+        {({getRootProps, getInputProps}) => (
+          <section>
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+              <p>Drag 'n' drop some files here, or click to select files</p>
+            </div>
+          </section>
+        )}
+      </Dropzone>
+      <div id="tableContainer">
+        <div className="hexContainer">
+          <h1>Hexadecimal</h1>
+          <div className="dataContainer">
+            { makeRows("hex") }
+          </div>
         </div>
-      </div>
-      <div className="asciiContainer">
-        <h1>ASCII</h1>
-        <div className="dataContainer">
-          { makeRows("ascii") }
+        <div className="asciiContainer">
+          <h1>ASCII</h1>
+          <div className="dataContainer">
+            { makeRows("ascii") }
+          </div>
         </div>
       </div>
     </div>

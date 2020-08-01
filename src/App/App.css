@@ -10,8 +10,6 @@ h1 {
 
 .dataContainer {
   border: 3px solid black;
-  display: flex;
-  flex-wrap: wrap;
 }
 
 .hexContainer {

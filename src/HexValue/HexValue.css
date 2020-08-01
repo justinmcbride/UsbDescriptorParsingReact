@@ -7,15 +7,16 @@
 }
 
 .Value {
-  text-align: center;
-  
+  width: 40px;
   padding: 5px;
 }
 
 .ValueAscii {
-  width: 75px;
+  width: 29px;
+  text-align: center;
 }
 
 .ValueHex {
-  width: 113px;
+  width: 36px;
+  text-align: center;
 }
