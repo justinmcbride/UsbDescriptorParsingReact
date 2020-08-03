@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import Dropzone from 'react-dropzone'
+import Download from '@axetroy/react-download';
 
 import './App.css';
 import HexValue from '../HexValue/HexValue';
@@ -116,13 +117,16 @@ const App = () => {
       <Dropzone onDrop={onDrop}>
         {({getRootProps, getInputProps}) => (
           <section>
-            <div {...getRootProps()}>
+            <span {...getRootProps()}>
               <input {...getInputProps()} />
-              <p>Drag 'n' drop some files here, or click to select files</p>
-            </div>
+              <button type="button">Import</button>
+            </span>
           </section>
         )}
       </Dropzone>
+      <Download file="export.bin" content={ new Uint8Array(values) }>
+          <button type="button">Export</button>
+        </Download>
       <div id="tableContainer">
         <div className="hexContainer">
           <h1>Hexadecimal</h1>
