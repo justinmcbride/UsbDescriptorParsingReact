@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import './HexValue.css';
-import { findAllByPlaceholderText } from '@testing-library/react';
 
 const HexValue = ( { index, value, mouseEnter, mouseLeave, valueChanged, hovered } ) => {
   let className = hovered ? "ValueHovered " : "ValueNotHovered ";

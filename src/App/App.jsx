@@ -40,7 +40,7 @@ const App = () => {
       reader.readAsArrayBuffer(file);
     })
     
-  }, [])
+  }, []);
 
   const onMouseEnter = (index) => {
     // console.log( `app informed of mouseEnter on [${row},${column}]`);
@@ -64,7 +64,7 @@ const App = () => {
   };
 
   const makeRows = (dataStyle) => {
-    const itemsPerRow = 16; // TODO: window.clientWidth / fontSize / 0x00 4 char
+    const itemsPerRow = 8; // TODO: window.clientWidth / fontSize / 0x00 4 char
     const rowCount = Math.ceil(values.length / itemsPerRow);
     const rowIndexes = [...Array(rowCount).keys()]; // range()
 
@@ -108,6 +108,9 @@ const App = () => {
           mouseLeave = { onMouseLeave }
           valueChanged = { valueChanged }
         />
+      }
+      else {
+        return <div></div>
       }
     });
   };
