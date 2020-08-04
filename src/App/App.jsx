@@ -5,6 +5,9 @@ import Download from '@axetroy/react-download';
 import './App.css';
 import HexValue from '../HexValue/HexValue';
 import AsciiValue from '../AsciiValue/AsciiValue';
+import DescriptorTable from '../DescriptorTable/DescriptorTable';
+
+import ParseUsbDescriptors from '../UsbDescriptors/DescriptorFactory';
 
 const NUMBER_OF_VALUES = 61;
 
@@ -144,6 +147,7 @@ const App = () => {
           </div>
         </div>
       </div>
+      <DescriptorTable rawData={values}/>
     </div>
   );
 }
