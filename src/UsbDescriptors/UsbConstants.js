@@ -1,4 +1,3 @@
-
 const DescriptorType = {
   Device: 0x01,
   Configuration: 0x02,
@@ -32,6 +31,7 @@ const Class = {
 
 const Uvc11 = {
   // USB_Video_Class_1.1.pdf
+  Class: 0x0E,
   DescriptorType: {
     // UVC 1.1 -- Page 122
     Undefined: 0x20,
@@ -41,7 +41,40 @@ const Uvc11 = {
     Interface: 0x24,
     Endpoint: 0x25,
   },
-  Class: 0x0E,
+  VsDescriptorSubType: {
+    // UVC 1.1 -- A.6 Video Class-Specific VS Interface Descriptor Subtypes
+    // Page 123
+    Undefined: 0x00,
+    InputHeader: 0x01,
+    OutputHeader: 0x02,
+    StillImageFrame: 0x03,
+    FormatUncompressed: 0x04,
+    FrameUncompressed: 0x05,
+    FormatMjpeg: 0x06,
+    FrameMjpeg: 0x07,
+    // Reserved: 0x08,
+    // Reserved: 0x09,
+    FormatMpeg2TS: 0x0A,
+    // Reserved: 0x0B,
+    FormatDv: 0x0C,
+    ColorFormat: 0x0D,
+    // Reserved: 0x0E,
+    // Reserved: 0x0F,
+    FormatFrameBased: 0x10,
+    FrameFrameBased: 0x11,
+    FormatStreamBased: 0x12,
+  },
+  VcDescriptorSubType: {
+    // UVC 1.1 -- A.5 Video Class-Specific VC Interface Descriptor Subtypes
+    // Page 122
+    Undefined: 0x00,
+    Header: 0x01,
+    InputTerminal: 0x02,
+    OutputTerminal: 0x03,
+    SelectorUnit: 0x04,
+    ProcessingUnit: 0x05,
+    ExtensionUnit: 0x06
+  },
   Subclass: {
     // UVC 1.1 -- Page 122
     Undefined: 0x00,
