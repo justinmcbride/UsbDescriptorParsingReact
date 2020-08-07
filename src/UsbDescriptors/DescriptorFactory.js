@@ -41,10 +41,26 @@ const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
       if( bDescriptorType === UsbConstants.Uvc11.DescriptorType.Interface ) {
         const bDescriptorSubType = rawData[2];
         if( interfaceSubclass === UsbConstants.Uvc11.Subclass.VideoControl ) {
-          console.log( `-->VC` );
+          if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.Header ) {
+            return new Uvc.UvcVcHeaderDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.InputTerminal ) {
+            return new Uvc.UvcVcInputTerminalDecsriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.OutputTerminal ) {
+            return new Uvc.UvcVcOutputTerminalDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.SelectorUnit ) {
+            return new Uvc.UvcVcSelectorUnitDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.ProcessingUnit ) {
+            return new Uvc.UvcVcProcessingUnitDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.ExtensionUnit ) {
+            return new Uvc.UvcVcExtensionUnitDescriptor( rawData );
+          }
         }
         else if( interfaceSubclass === UsbConstants.Uvc11.Subclass.VideoStreaming ) {
-          console.log( `-->VS` );
           if( bDescriptorSubType === UsbConstants.Uvc11.VsDescriptorSubType.InputHeader ) {
             return new Uvc.UvcVsInputHeaderDescriptor( rawData );
           }

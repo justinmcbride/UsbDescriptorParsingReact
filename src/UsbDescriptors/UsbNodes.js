@@ -70,7 +70,12 @@ class DeviceDescriptor extends UsbBaseNode {
   }
 
   Print = () => {
-    return `Device: verified=[${this.Verify()}] bLength=[${this.bLength()}] idVendor=[${this.idVendor()}] idProduct=[${this.idProduct()}]`;
+    return `Device:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+      + ` idVendor=[${this.idVendor()}]`
+      + ` idProduct=[${this.idProduct()}]`
+    ;
   }
 };
 
