@@ -61,13 +61,50 @@ const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
   }
 };
 
+const ParseFormatTree = ( currentNode, rawData, validChildren ) => {
+  // iterate until a non-child type is found
+  let currentOffset = 0;
+  while( currentOffset < rawData.length )
+  {
+    if( currentOffset + 2 >= rawData.length ) {
+      console.log( `Dangling data: currentOffset=[${currentOffset}] rawData.length=[${rawData.length}]` );
+      return currentOffset;
+    }
+
+    const bLength = rawData[currentOffset + 0];
+    const bDescriptorType = rawData[currentOffset + 1];
+    if ( bDescriptorType !== UsbConstants.Uvc11.DescriptorType.Interface ) {
+      return currentOffset;
+    }
+    
+    if( currentOffset + bLength > rawData.length ) {
+      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${rawData.length}]` );
+      return currentOffset;
+    }
+
+    const bDescriptorSubType = rawData[currentOffset + 2];
+    if( !validChildren.includes( bDescriptorSubType ) )
+    {
+        // probably a sibling for the format
+        return currentOffset;
+    }
+
+    const childDescriptor = rawData.slice( currentOffset, currentOffset + bLength );
+    const subnode = NodeFactory( childDescriptor, UsbConstants.Uvc11.Class, UsbConstants.Uvc11.Subclass.VideoStreaming );
+
+    currentNode.children.push( subnode );
+    currentOffset += bLength;
+  }
+  return currentOffset;
+};
+
 const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) => {
   const dataView = new Uint8Array( rawData );
   for( let currentOffset = 0; currentOffset < dataView.length; ) {
     // check size
     if( currentOffset + 2 >= dataView.length ) {
       // bad data here...
-      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=${dataView.length}` );
+      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
       return;
     }
 
@@ -75,6 +112,11 @@ const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) =>
     const bDescriptorType = dataView[currentOffset + 1];
 
     console.log( `bLength=[${bLength}] bDescriptorType=[${bDescriptorType}]` );
+
+    if( currentOffset + bLength > dataView.length ) {
+      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
+      return;
+    }
 
     const thisDescriptor = dataView.slice( currentOffset, currentOffset + bLength );
     const newChildNode = NodeFactory( thisDescriptor, interfaceClass, interfaceSubclass );
@@ -87,7 +129,7 @@ const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) =>
       const childDataLength = newChildNode.wTotalLength() - newChildNode.bLength();
       const indexEnd = indexBegin + childDataLength;
 
-      const childData = rawData.slice( indexBegin, indexEnd );
+      const childData = dataView.slice( indexBegin, indexEnd );
 
       ParseTree( newChildNode, childData, interfaceClass, interfaceSubclass );
       currentOffset += childDataLength;
@@ -103,41 +145,22 @@ const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) =>
       const childDataLength = newChildNode.wTotalLength() - newChildNode.bLength();
       const indexEnd = indexBegin + childDataLength;
 
-      const childData = rawData.slice( indexBegin, indexEnd );
+      const childData = dataView.slice( indexBegin, indexEnd );
 
       ParseTree( newChildNode, childData, interfaceClass, interfaceSubclass );
       currentOffset += childDataLength;
     }
     else if( newChildNode instanceof Uvc.UvcVsFormatUncompressedDescriptor ) {
-      const childData = rawData.slice( currentOffset + newChildNode.bLength() );
-
-      // iterate until a non-child type is found
-      let childOffset = 0;
-      while( childOffset < childData.length )
-      {
-        const bLength = childData[childOffset + 0];
-        const bDescriptorType = childData[childOffset + 1];
-        if ( bDescriptorType !== UsbConstants.Uvc11.DescriptorType.Interface ) {
-          currentOffset += childOffset;
-          break;
-        }
-
-        const bDescriptorSubType = childData[childOffset + 2];
-
-        if( bDescriptorSubType !== UsbConstants.Uvc11.VsDescriptorSubType.FrameUncompressed
-            && bDescriptorSubType !== UsbConstants.Uvc11.VsDescriptorSubType.ColorFormat )
-        {
-            // probably a sibling for the format
-            currentOffset += childOffset;
-            break;
-        }
-
-        const childDescriptor = childData.slice( childOffset, childOffset + bLength );
-        const subnode = NodeFactory( childDescriptor, interfaceClass, interfaceSubclass );
-
-        newChildNode.children.push( subnode );
-        childOffset += bLength;
-      }
+      const childData = dataView.slice( currentOffset + newChildNode.bLength() );
+      const validChildren = [UsbConstants.Uvc11.VsDescriptorSubType.FrameUncompressed, UsbConstants.Uvc11.VsDescriptorSubType.ColorFormat ];
+      const childrenLength = ParseFormatTree( newChildNode, childData, validChildren );
+      currentOffset += childrenLength;
+    }
+    else if( newChildNode instanceof Uvc.UvcVsFormatMjpegDescriptor ) {
+      const childData = dataView.slice( currentOffset + newChildNode.bLength() );
+      const validChildren = [UsbConstants.Uvc11.VsDescriptorSubType.FrameMjpeg, UsbConstants.Uvc11.VsDescriptorSubType.ColorFormat ];
+      const childrenLength = ParseFormatTree( newChildNode, childData, validChildren );
+      currentOffset += childrenLength;
     }
 
     currentNode.children.push( newChildNode );
