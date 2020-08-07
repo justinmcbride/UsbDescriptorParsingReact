@@ -135,10 +135,97 @@ class InterfaceDescriptor extends UsbBaseNode {
   }
 };
 
+class EndpointDescriptor extends UsbBaseNode {
+  constructor( rawData ) {
+    super( rawData );
+  }
+
+  Verify = () => {
+    if ( this.rawData.byteLength !== 7 ) return false;
+    return true;
+  }
+  
+  Print = () => {
+    return `Endpoint:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
+  }
+};
+
+class SuperSpeedEndpointCompanionDescriptor extends UsbBaseNode {
+  constructor( rawData ) {
+    super( rawData );
+  }
+
+  Verify = () => {
+    if ( this.rawData.byteLength !== 6 ) return false;
+    return true;
+  }
+  
+  Print = () => {
+    return `SS Endpoint Companion:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
+  }
+};
+
+class InterfaceAssosciationDescriptor extends UsbBaseNode {
+  constructor( rawData ) {
+    super( rawData );
+  }
+
+  Verify = () => {
+    // TODO: verify structure is correct
+    if( this.rawData.byteLength !== 8 ) return false;
+    if( this.bFunctionClass() === 0 ) return false;
+    return true;
+  }
+
+  bFirstInterface = () => {
+    const dataView = new Uint8Array( this.rawData, 2, 1 );
+    return dataView[0];
+  }
+
+  bInterfaceCount = () => {
+    const dataView = new Uint8Array( this.rawData, 3, 1 );
+    return dataView[0];
+  }
+
+  bFunctionClass = () => {
+    const dataView = new Uint8Array( this.rawData, 4, 1 );
+    return dataView[0];
+  }
+
+  bFunctionSubClass = () => {
+    const dataView = new Uint8Array( this.rawData, 5, 1 );
+    return dataView[0];
+  }
+
+  bFunctionProtocol = () => {
+    const dataView = new Uint8Array( this.rawData, 6, 1 );
+    return dataView[0];
+  }
+
+  Print = () => {
+    return `Interface Association:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+      + ` bFirstInterface=[${this.bFirstInterface()}]`
+      + ` bInterfaceCount=[${this.bInterfaceCount()}]`
+      + ` bFunctionClass=[${this.bFunctionClass()}]`
+    ;
+  }
+};
+
 module.exports = {
   UsbBaseNode: UsbBaseNode,
   RootNode: RootNode,
   DeviceDescriptor: DeviceDescriptor,
   ConfigurationDescriptor: ConfigurationDescriptor,
   InterfaceDescriptor: InterfaceDescriptor,
+  EndpointDescriptor: EndpointDescriptor,
+  SuperSpeedEndpointCompanionDescriptor: SuperSpeedEndpointCompanionDescriptor,
+  InterfaceAssosciationDescriptor: InterfaceAssosciationDescriptor,
 };

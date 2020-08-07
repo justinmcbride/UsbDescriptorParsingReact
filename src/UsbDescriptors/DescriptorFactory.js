@@ -27,6 +27,15 @@ const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
   else if( bDescriptorType === UsbConstants.DescriptorType.Interface ) {
     return new Usb.InterfaceDescriptor( rawData );
   }
+  else if( bDescriptorType === UsbConstants.DescriptorType.Endpoint ) {
+    return new Usb.EndpointDescriptor( rawData );
+  }
+  else if( bDescriptorType === UsbConstants.DescriptorType.SuperSpeedEndpointCompanion ) {
+    return new Usb.SuperSpeedEndpointCompanionDescriptor( rawData );
+  }
+  else if ( bDescriptorType === UsbConstants.DescriptorType.InterfaceAssociation ) {
+    return new Usb.InterfaceAssosciationDescriptor( rawData );
+  }
   else {
     if( interfaceClass === UsbConstants.Uvc11.Class ) {
       if( bDescriptorType === UsbConstants.Uvc11.DescriptorType.Interface ) {

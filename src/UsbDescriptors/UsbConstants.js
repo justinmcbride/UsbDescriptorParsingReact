@@ -7,6 +7,9 @@ const DescriptorType = {
   DeviceQualifier: 0x06,
   OtherSpeedConfig: 0x07,
   InterfaceAssociation: 0x0B,
+  // USB 3.2 -- Page 331
+  // SUPERSPEED_USB_ENDPOINT_COMPANION
+  SuperSpeedEndpointCompanion: 48
 };
 
 const Class = {
