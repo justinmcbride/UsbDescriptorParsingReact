@@ -5,11 +5,13 @@ import UsbDescriptor from './UsbDescriptor';
 
 const UnknownDescriptor = ( { rawData } ) =>
 {
+  const dataView = new Uint8Array( rawData );
+
   return (
-    <UsbDescriptor>
+    <UsbDescriptor rawData={rawData}>
       <tr>
         <td>Remaining Data Length</td>
-        <td>{rawData.length}</td>
+        <td>{dataView.length}</td>
       </tr>
     </UsbDescriptor>
   );

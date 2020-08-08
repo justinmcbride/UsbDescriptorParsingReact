@@ -87,56 +87,49 @@ const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
 };
 
 const ParseFormatTree = ( currentNode, rawData, validChildren ) => {
-  // iterate until a non-child type is found
-  let currentOffset = 0;
-  while( currentOffset < rawData.length )
-  {
-    if( currentOffset + 2 >= rawData.length ) {
-      console.log( `Dangling data: currentOffset=[${currentOffset}] rawData.length=[${rawData.length}]` );
+  const dataView = new Uint8Array( rawData );
+  for( let currentOffset = 0; currentOffset < dataView.length; ) {
+    if( currentOffset + 2 >= dataView.length ) {
+      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
       return currentOffset;
     }
 
-    const bLength = rawData[currentOffset + 0];
-    const bDescriptorType = rawData[currentOffset + 1];
-    if ( bDescriptorType !== UsbConstants.Uvc11.DescriptorType.Interface ) {
-      return currentOffset;
-    }
-    
-    if( currentOffset + bLength > rawData.length ) {
-      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${rawData.length}]` );
+    const bLength = dataView[currentOffset + 0];
+    const bDescriptorType = dataView[currentOffset + 1];
+
+    if( currentOffset + bLength > dataView.length ) {
+      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
       return currentOffset;
     }
 
-    const bDescriptorSubType = rawData[currentOffset + 2];
-    if( !validChildren.includes( bDescriptorSubType ) )
+    const thisDescriptor = dataView.slice( currentOffset, currentOffset + bLength );
+    const bDescriptorSubType = thisDescriptor[2];
+    if( bDescriptorType !== UsbConstants.Uvc11.DescriptorType.Interface || !validChildren.includes( bDescriptorSubType ) )
     {
         // probably a sibling for the format
         return currentOffset;
     }
 
-    const childDescriptor = rawData.slice( currentOffset, currentOffset + bLength );
-    const subnode = NodeFactory( childDescriptor, UsbConstants.Uvc11.Class, UsbConstants.Uvc11.Subclass.VideoStreaming );
+    const newChildNode = NodeFactory( thisDescriptor, UsbConstants.Uvc11.Class, UsbConstants.Uvc11.Subclass.VideoStreaming );
 
-    currentNode.children.push( subnode );
+    currentNode.children.push( newChildNode );
     currentOffset += bLength;
   }
-  return currentOffset;
+  
+  // made it all the way to the end of rawData
+  return rawData.length;
 };
 
 const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) => {
   const dataView = new Uint8Array( rawData );
   for( let currentOffset = 0; currentOffset < dataView.length; ) {
-    // check size
     if( currentOffset + 2 >= dataView.length ) {
-      // bad data here...
       console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
       return;
     }
 
     const bLength = dataView[currentOffset + 0];
     const bDescriptorType = dataView[currentOffset + 1];
-
-    console.log( `bLength=[${bLength}] bDescriptorType=[${bDescriptorType}]` );
 
     if( currentOffset + bLength > dataView.length ) {
       console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
@@ -147,9 +140,10 @@ const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) =>
     const newChildNode = NodeFactory( thisDescriptor, interfaceClass, interfaceSubclass );
 
     // Some special cases
-    if( newChildNode instanceof Usb.ConfigurationDescriptor ) {
-      // at this point, we need to recursively add wTotalLength data under the configuration node.
-      // we also substract the length of the config descriptor itself from wTotalLength
+    if( newChildNode instanceof Usb.ConfigurationDescriptor
+        || newChildNode instanceof Uvc.UvcVsInputHeaderDescriptor ) {
+      // at this point, we need to recursively add wTotalLength data under the current node.
+      // we also substract the length of this descriptor from wTotalLength
       const indexBegin = currentOffset + newChildNode.bLength();
       const childDataLength = newChildNode.wTotalLength() - newChildNode.bLength();
       const indexEnd = indexBegin + childDataLength;
@@ -164,16 +158,6 @@ const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) =>
       interfaceClass = newChildNode.bInterfaceClass();
       interfaceSubclass = newChildNode.bInterfaceSubClass();
       console.log( `New context: interfaceClass=[${interfaceClass}] interfaceSubclass=[${interfaceSubclass}]` );
-    }
-    else if( newChildNode instanceof Uvc.UvcVsInputHeaderDescriptor ) {
-      const indexBegin = currentOffset + newChildNode.bLength();
-      const childDataLength = newChildNode.wTotalLength() - newChildNode.bLength();
-      const indexEnd = indexBegin + childDataLength;
-
-      const childData = dataView.slice( indexBegin, indexEnd );
-
-      ParseTree( newChildNode, childData, interfaceClass, interfaceSubclass );
-      currentOffset += childDataLength;
     }
     else if( newChildNode instanceof Uvc.UvcVsFormatUncompressedDescriptor ) {
       const childData = dataView.slice( currentOffset + newChildNode.bLength() );
