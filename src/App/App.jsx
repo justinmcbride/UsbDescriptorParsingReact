@@ -7,8 +7,6 @@ import HexValue from '../HexValue/HexValue';
 import AsciiValue from '../AsciiValue/AsciiValue';
 import DescriptorTable from '../DescriptorTable/DescriptorTable';
 
-import ParseUsbDescriptors from '../UsbDescriptors/DescriptorFactory';
-
 const NUMBER_OF_VALUES = 61;
 
 const CreateFakeData = () => {
@@ -133,7 +131,7 @@ const App = () => {
       <Download file="export.bin" content={ new Uint8Array(values) }>
           <button type="button">Export</button>
         </Download>
-      <div id="tableContainer">
+      {/* <div id="tableContainer">
         <div className="hexContainer">
           <h1>Hexadecimal</h1>
           <div className="dataContainer">
@@ -146,7 +144,7 @@ const App = () => {
             { makeRows("ascii") }
           </div>
         </div>
-      </div>
+      </div> */}
       <DescriptorTable rawData={values}/>
     </div>
   );

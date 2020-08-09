@@ -16,7 +16,7 @@ const DescriptorTable = ( {rawData} ) =>
   const descriptorList = [];
   const TransformNodes = (node) => {
     if( node.rawData !== null && node.rawData.byteLength > 0 ) {
-      descriptorList.push( <UnknownDescriptor rawData={node.rawData}/> );
+      descriptorList.push( <UnknownDescriptor rawData={node.rawData} description={node.Print()}/> );
     }
     for( let childNode of node.children ) {
       TransformNodes( childNode );

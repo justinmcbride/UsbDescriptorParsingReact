@@ -1,11 +1,12 @@
 import React from 'react';
 
-const UsbDescriptor = ( { children, rawData } ) =>
+const UsbDescriptor = ( { children, rawData, description } ) =>
 {
   const dataView = new Uint8Array( rawData );
   return (
     <div>
-      <h1>Descriptor</h1>
+      <h3>Descriptor</h3>
+      <p>{description}</p>
       <table>
         <thead>
           <tr>

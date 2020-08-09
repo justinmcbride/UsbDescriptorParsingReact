@@ -3,12 +3,12 @@ import React from 'react';
 import UsbDescriptor from './UsbDescriptor';
 
 
-const UnknownDescriptor = ( { rawData } ) =>
+const UnknownDescriptor = ( { rawData, description } ) =>
 {
   const dataView = new Uint8Array( rawData );
 
   return (
-    <UsbDescriptor rawData={rawData}>
+    <UsbDescriptor rawData={rawData} description={description}>
       <tr>
         <td>Remaining Data Length</td>
         <td>{dataView.length}</td>
