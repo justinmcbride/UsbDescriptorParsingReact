@@ -22,10 +22,7 @@ const DescriptorTable = ( {rawData} ) =>
     else {
       descriptorList.push(
         <UnknownDescriptor
-          type={node.type}
-          rawData={node.rawData}
-          description={node.Print()}
-          fields={node.fields}
+          node={node}
           key={index++}
         />
       );

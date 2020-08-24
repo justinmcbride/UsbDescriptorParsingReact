@@ -2,9 +2,9 @@ import React from 'react';
 
 import './UsbDescriptor.css';
 
-const UsbDescriptor = ( { children, rawData, description, type } ) =>
+const UsbDescriptor = ( { children, node } ) =>
 {
-  const dataView = new Uint8Array( rawData );
+  const dataView = new Uint8Array( node.rawData );
 
   let tableElement = null;
   if( children.length > 0 ) {
@@ -24,7 +24,7 @@ const UsbDescriptor = ( { children, rawData, description, type } ) =>
   }
   return (
     <div>
-      <h3>{type}</h3>
+      <h3>{node.type}</h3>
       <span>Data Length: {dataView.byteLength}</span>
       { tableElement }
     </div>
