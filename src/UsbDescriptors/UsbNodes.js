@@ -1,27 +1,13 @@
-class UsbBaseNode {
-  constructor( rawData ) {
-    this.rawData = new Uint8Array( rawData ).buffer;
+class TreeNode {
+  constructor(type) {
     this.children = [];
-  }
-
-  bLength = () => {
-    const dataView = new Uint8Array( this.rawData, 0, 1 );
-    return dataView[0];
-  }
-
-  bDescriptorType = () => {
-    const dataView = new Uint8Array( this.rawData, 1, 1 );
-    return dataView[0];
+    this.type = type ?? "Unknown TreeNode";
   }
 
   Print = () => {
-    return `Unknown: rawData.length=[${this.rawData.byteLength}] bLength=[${this.bLength()}] bDescriptorType=[${this.bDescriptorType()}] rawData=[${new Uint8Array( this.rawData )}]`;
+    return `${this.type}`;
   }
 
-  Verify = () => {
-    return false;
-  }
-  
   PrintTreeFromHere = (tabLevel) => {
     let formattedOutput = "";
     const tabs = "  ".repeat(tabLevel);
@@ -38,24 +24,83 @@ class UsbBaseNode {
   }
 };
 
-class RootNode extends UsbBaseNode {
+class RootNode extends TreeNode {
   constructor() {
-    super( null );
+    super( `Root` );
+    this.children = [];
   }
 
   Print = () => {
-    return `Root`;
+    return `${this.type}`;
   }
 };
 
+class DanglingDataNode extends TreeNode {
+  constructor( rawData ) {
+    super( `Dangling Data` );
+    this.rawData = new Uint8Array( rawData );
+  }
+
+  Print = () => {
+    return `${this.type}: rawData.length=[${this.rawData.byteLength}] rawData=[${this.rawData}]`;
+  }
+}
+
+class UsbBaseNode extends TreeNode {
+  constructor( type, rawData ) {
+    super( type );
+    this.rawData = new Uint8Array( rawData );
+    this.fields = {
+      bLength: this.rawData[0],
+      bDescriptorType: this.rawData[1],
+    };
+  }
+
+  bLength = () => {
+    return this.fields.bLength;
+  }
+
+  bDescriptorType = () => {
+    return this.fields.bDescriptorType;
+  }
+
+  Print = () => {
+    return `${this.type}:`
+      + ` rawData.length=[${this.rawData.byteLength}]`
+      + ` bLength=[${this.bLength()}]`
+      + ` bDescriptorType=[${this.bDescriptorType()}]`
+      + ` rawData=[${this.rawData}]`
+    ;
+  }
+
+  Verify = () => {
+    return false;
+  }
+};
+
+class UnknownDescriptor extends UsbBaseNode {
+  constructor( rawData ) {
+    super( `Unknown Descriptor`, rawData );
+  }
+
+  Print = () => {
+    return `${this.type}:`
+      + ` rawData.length=[${this.rawData.byteLength}]`
+      + ` bLength=[${this.bLength()}]`
+      + ` bDescriptorType=[${this.bDescriptorType()}]`
+      + ` rawData=[${this.rawData}]`
+    ;
+  }
+}
+
 class DeviceDescriptor extends UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Device`, rawData ); 
   }
 
   Verify = () => {
     // TODO: verify structure is correct
-    if ( this.rawData.byteLength !== 18 ) return false;
+    if( this.rawData.byteLength !== 18 ) return false;
     return true;
   }
 
@@ -70,7 +115,7 @@ class DeviceDescriptor extends UsbBaseNode {
   }
 
   Print = () => {
-    return `Device:`
+    return `${this.type}:`
       + ` verified=[${this.Verify()}]`
       + ` bLength=[${this.bLength()}]`
       + ` idVendor=[${this.idVendor()}]`
@@ -81,12 +126,12 @@ class DeviceDescriptor extends UsbBaseNode {
 
 class ConfigurationDescriptor extends UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Configuration`, rawData );
   }
 
   Verify = () => {
     // TODO: verify structure is correct
-    if ( this.rawData.byteLength !== 9 ) return false;
+    if( this.rawData.byteLength !== 9 ) return false;
     return true;
   }
 
@@ -96,18 +141,18 @@ class ConfigurationDescriptor extends UsbBaseNode {
   }
 
   Print = () => {
-    return `Configuration: verified=[${this.Verify()}] bLength=[${this.bLength()}] wTotalLength=[${this.wTotalLength()}]`;
+    return `${this.type}: verified=[${this.Verify()}] bLength=[${this.bLength()}] wTotalLength=[${this.wTotalLength()}]`;
   }
 }
 
 class InterfaceDescriptor extends UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Interface`, rawData );
+    this.fields["bInterfaceNumber"] = this.rawData[2];
   }
 
   bInterfaceNumber = () => {
-    const dataView = new Uint8Array( this.rawData, 2, 1 );
-    return dataView[0];
+    return this.fields.bInterfaceNumber;
   }
 
   bAlternateSetting = () => {
@@ -131,27 +176,27 @@ class InterfaceDescriptor extends UsbBaseNode {
   }
 
   Verify = () => {
-    if ( this.rawData.byteLength !== 9 ) return false;
+    if( this.rawData.byteLength !== 9 ) return false;
     return true;
   }
 
   Print = () => {
-    return `Interface: verified=[${this.Verify()}] bLength=[${this.bLength()}] bInterfaceNumber=[${this.bInterfaceNumber()}] bAlternateSetting=[${this.bAlternateSetting()}] bInterfaceClass=[${this.bInterfaceClass()}] bInterfaceSubClass=[${this.bInterfaceSubClass()}]`;
+    return `${this.type}: verified=[${this.Verify()}] bLength=[${this.bLength()}] bInterfaceNumber=[${this.bInterfaceNumber()}] bAlternateSetting=[${this.bAlternateSetting()}] bInterfaceClass=[${this.bInterfaceClass()}] bInterfaceSubClass=[${this.bInterfaceSubClass()}]`;
   }
 };
 
 class EndpointDescriptor extends UsbBaseNode {
-  constructor( rawData ) {
-    super( rawData );
+  constructor(rawData) {
+    super( `Endpoint`, rawData );
   }
 
   Verify = () => {
-    if ( this.rawData.byteLength !== 7 ) return false;
+    if( this.rawData.byteLength !== 7 ) return false;
     return true;
   }
   
   Print = () => {
-    return `Endpoint:`
+    return `${this.type}:`
       + ` verified=[${this.Verify()}]`
       + ` bLength=[${this.bLength()}]`
     ;
@@ -160,7 +205,7 @@ class EndpointDescriptor extends UsbBaseNode {
 
 class SuperSpeedEndpointCompanionDescriptor extends UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `SS Endpoint Companion`, rawData );
   }
 
   Verify = () => {
@@ -169,7 +214,7 @@ class SuperSpeedEndpointCompanionDescriptor extends UsbBaseNode {
   }
   
   Print = () => {
-    return `SS Endpoint Companion:`
+    return `${this.type}:`
       + ` verified=[${this.Verify()}]`
       + ` bLength=[${this.bLength()}]`
     ;
@@ -178,7 +223,7 @@ class SuperSpeedEndpointCompanionDescriptor extends UsbBaseNode {
 
 class InterfaceAssosciationDescriptor extends UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Interface Association`, rawData );
   }
 
   Verify = () => {
@@ -214,7 +259,7 @@ class InterfaceAssosciationDescriptor extends UsbBaseNode {
   }
 
   Print = () => {
-    return `Interface Association:`
+    return `${this.type}:`
       + ` verified=[${this.Verify()}]`
       + ` bLength=[${this.bLength()}]`
       + ` bFirstInterface=[${this.bFirstInterface()}]`
@@ -225,8 +270,10 @@ class InterfaceAssosciationDescriptor extends UsbBaseNode {
 };
 
 module.exports = {
-  UsbBaseNode: UsbBaseNode,
+  DanglingDataNode: DanglingDataNode,
   RootNode: RootNode,
+  UsbBaseNode: UsbBaseNode,
+  UnknownDescriptor: UnknownDescriptor,
   DeviceDescriptor: DeviceDescriptor,
   ConfigurationDescriptor: ConfigurationDescriptor,
   InterfaceDescriptor: InterfaceDescriptor,

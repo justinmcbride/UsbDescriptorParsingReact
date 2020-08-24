@@ -82,7 +82,7 @@ const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
         }
       }
     }
-    return new Usb.UsbBaseNode( rawData );
+    return new Usb.UnknownDescriptor( rawData );
   }
 };
 

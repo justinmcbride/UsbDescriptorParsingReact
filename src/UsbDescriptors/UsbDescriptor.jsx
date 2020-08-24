@@ -1,12 +1,14 @@
 import React from 'react';
 
-const UsbDescriptor = ( { children, rawData, description } ) =>
+import './UsbDescriptor.css';
+
+const UsbDescriptor = ( { children, rawData, description, type } ) =>
 {
   const dataView = new Uint8Array( rawData );
-  return (
-    <div>
-      <h3>Descriptor</h3>
-      <p>{description}</p>
+
+  let tableElement = null;
+  if( children.length > 0 ) {
+    tableElement =
       <table>
         <thead>
           <tr>
@@ -15,17 +17,16 @@ const UsbDescriptor = ( { children, rawData, description } ) =>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>bLength</td>
-            <td>{dataView[0]}</td>
-          </tr>
-          <tr>
-            <td>bDescriptorType</td>
-            <td>{dataView[1]}</td>
-          </tr>
           { children }
         </tbody>
       </table>
+    ;
+  }
+  return (
+    <div>
+      <h3>{type}</h3>
+      <span>Data Length: {dataView.byteLength}</span>
+      { tableElement }
     </div>
   );
 }

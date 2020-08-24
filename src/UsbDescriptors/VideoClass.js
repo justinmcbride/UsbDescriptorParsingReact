@@ -4,7 +4,7 @@ const Usb = require( './UsbNodes' );
 
 class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Streaming Input Header`, rawData );
   }
 
   wTotalLength = () => {
@@ -13,57 +13,75 @@ class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
   }
 
   Print = () => {
-    return `Video Streaming Input Header: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVsFormatUncompressedDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Streaming Format Uncompressed`, rawData );
   }
 
   Print = () => {
-    return `Video Streaming Format Uncompressed: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + `verified=[${this.Verify()}]`
+      + `bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVsFrameUncompressedDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Streaming Frame Uncompressed`, rawData );
   }
 
   Print = () => {
-    return `Video Streaming Frame Uncompressed: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVsFormatMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Streaming Format Mjpeg`, rawData );
   }
 
   Print = () => {
-    return `Video Streaming Format Mjpeg: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVsFrameMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Streaming Frame Mjpeg`, rawData );
   }
 
   Print = () => {
-    return `Video Streaming Frame Mjpeg: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVsColorFormatDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Streaming Color Format`, rawData );
   }
 
   Print = () => {
-    return `Video Streaming Color Format: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
@@ -71,61 +89,79 @@ class UvcVsColorFormatDescriptor extends Usb.UsbBaseNode {
 
 class UvcVcHeaderDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Control Header`, rawData );
   }
 
   Print = () => {
-    return `Video Control Header: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVcInputTerminalDecsriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Control Input Terminal`, rawData );
   }
 
   Print = () => {
-    return `Video Control Input Terminal: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVcOutputTerminalDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Control Output Terminal`, rawData );
   }
 
   Print = () => {
-    return `Video Control Output Terminal: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVcSelectorUnitDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Control Selector Unit`, rawData );
   }
 
   Print = () => {
-    return `Video Control Selector Unit: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVcProcessingUnitDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Control Processing Unit`, rawData );
   }
 
   Print = () => {
-    return `Video Control Processing Unit: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 
 class UvcVcExtensionUnitDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( rawData );
+    super( `Video Control Extension Unit`, rawData );
   }
 
   Print = () => {
-    return `Video Control Extension Unit: verified=[${this.Verify()}] bLength=[${this.bLength()}]`;
+    return `${this.type}:`
+      + ` verified=[${this.Verify()}]`
+      + ` bLength=[${this.bLength()}]`
+    ;
   }
 };
 

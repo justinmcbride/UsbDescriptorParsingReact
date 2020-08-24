@@ -14,10 +14,23 @@ const DescriptorTable = ( {rawData} ) =>
   console.log( output );
 
   const descriptorList = [];
+  let index = 0;
   const TransformNodes = (node) => {
-    if( node.rawData !== null && node.rawData.byteLength > 0 ) {
-      descriptorList.push( <UnknownDescriptor rawData={node.rawData} description={node.Print()}/> );
+    if( node.type === "Root" ) {
+      // skip
     }
+    else {
+      descriptorList.push(
+        <UnknownDescriptor
+          type={node.type}
+          rawData={node.rawData}
+          description={node.Print()}
+          fields={node.fields}
+          key={index++}
+        />
+      );
+    }
+
     for( let childNode of node.children ) {
       TransformNodes( childNode );
     }
