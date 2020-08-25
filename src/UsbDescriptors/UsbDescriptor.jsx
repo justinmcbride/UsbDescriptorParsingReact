@@ -2,14 +2,18 @@ import React from 'react';
 
 import './UsbDescriptor.css';
 
-const UsbDescriptor = ( { children, node } ) =>
+import Card from 'react-bootstrap/Card';
+import Accordion from 'react-bootstrap/Accordion';
+import Table from 'react-bootstrap/Table'
+
+const UsbDescriptor = ( { children, node, index } ) =>
 {
   const dataView = new Uint8Array( node.rawData );
 
   let tableElement = null;
   if( children.length > 0 ) {
     tableElement =
-      <table>
+      <Table striped bordered hover size="sm">
         <thead>
           <tr>
             <th>Field</th>
@@ -19,15 +23,21 @@ const UsbDescriptor = ( { children, node } ) =>
         <tbody>
           { children }
         </tbody>
-      </table>
+      </Table>
     ;
   }
   return (
-    <div>
-      <h3>{node.type}</h3>
-      <span>Data Length: {dataView.byteLength}</span>
-      { tableElement }
-    </div>
+    <Card>
+      <Accordion.Toggle as={Card.Header} eventKey={index}>
+        {node.type}
+      </Accordion.Toggle>
+      <Accordion.Collapse eventKey={index}>
+        <Card.Body>
+          <span>Data Length: {dataView.byteLength}</span>
+          { tableElement }
+        </Card.Body>
+      </Accordion.Collapse>
+    </Card>
   );
 }
 

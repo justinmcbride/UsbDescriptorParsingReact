@@ -2,6 +2,8 @@ import React from 'react';
 
 import UnknownDescriptor from '../UsbDescriptors/UnknownDescriptor';
 
+import Accordion from 'react-bootstrap/Accordion';
+
 const { ParseTree } = require('../UsbDescriptors/DescriptorFactory');
 const { RootNode } = require('../UsbDescriptors/UsbNodes');
 
@@ -14,7 +16,7 @@ const DescriptorTable = ( {rawData} ) =>
   console.log( output );
 
   const descriptorList = [];
-  let index = 0;
+  let index = 1;
   const TransformNodes = (node) => {
     if( node.type === "Root" ) {
       // skip
@@ -23,9 +25,11 @@ const DescriptorTable = ( {rawData} ) =>
       descriptorList.push(
         <UnknownDescriptor
           node={node}
-          key={index++}
+          key={index}
+          index={index}
         />
       );
+      index++;
     }
 
     for( let childNode of node.children ) {
@@ -37,7 +41,9 @@ const DescriptorTable = ( {rawData} ) =>
   return (
     <div>
       <h1>Descriptors</h1>
-      { descriptorList }
+      <Accordion>
+        { descriptorList }
+      </Accordion>
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React from 'react';
 
 import UsbDescriptor from './UsbDescriptor';
 
-const UnknownDescriptor = ( { node } ) =>
+const UnknownDescriptor = ( { node, index } ) =>
 {
   const fieldItems = [];
   
@@ -17,8 +17,10 @@ const UnknownDescriptor = ( { node } ) =>
     }
   }
 
+  // switch to map
+
   return (
-    <UsbDescriptor node={node}>
+    <UsbDescriptor node={node} key={index} index={index}>
       { fieldItems }
     </UsbDescriptor>
   );

@@ -8,7 +8,7 @@ class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
     this.fields.push(
       { field: `bDescriptorSubtype`, index: 2, size: 1, },
       { field: `bNumFormats`, index: 3, size: 1, },
-      { field: `wTotalLength`, index: 4, size: 2, }
+      { field: `wTotalLength`, index: 4, size: 2, },
       { field: `bEndpointAddress`, index: 6, size: 1, },
       { field: `bmInfo`, index: 7, size: 1, },
       { field: `bTerminalLink`, index: 8, size: 1, },
