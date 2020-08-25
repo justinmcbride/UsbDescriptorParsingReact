@@ -5,11 +5,18 @@ const Usb = require( './UsbNodes' );
 class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Input Header`, rawData );
-    this.fields.push( {
-      field: `wTotalLength`,
-      index: 4,
-      size: 2,
-    });
+    this.fields.push(
+      { field: `bDescriptorSubtype`, index: 2, size: 1, },
+      { field: `bNumFormats`, index: 3, size: 1, },
+      { field: `wTotalLength`, index: 4, size: 2, }
+      { field: `bEndpointAddress`, index: 6, size: 1, },
+      { field: `bmInfo`, index: 7, size: 1, },
+      { field: `bTerminalLink`, index: 8, size: 1, },
+      { field: `bStillCaptureMethod`, index: 9, size: 1, },
+      { field: `bTriggerSupport`, index: 10, size: 1, },
+      { field: `bTriggerUsage`, index: 11, size: 1, },
+      { field: `bControlSize`, index: 12, size: 1, },
+    );
   }
 };
 
@@ -40,6 +47,12 @@ class UvcVsFrameMjpegDescriptor extends Usb.UsbBaseNode {
 class UvcVsColorFormatDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Color Format`, rawData );
+    this.fields.push(
+      { field: `bDescriptorSubtype`, index: 2, size: 1, },
+      { field: `bColorPrimaries`, index: 3, size: 1, },
+      { field: `bTransferCharacteristics`, index: 4, size: 1, },
+      { field: `bMatrixCoefficients`, index: 5, size: 1, },
+    );
   }
 };
 

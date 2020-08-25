@@ -56,16 +56,8 @@ class UsbBaseNode extends TreeNode {
     super( type );
     this.rawData = new Uint8Array( rawData );
     this.fields = [
-      {
-        field: `bLength`,
-        index: 0,
-        size: 1,
-      },
-      {
-        field: `bDescriptorType`,
-        index: 1,
-        size: 1,
-      },
+      { field: `bLength`, index: 0, size: 1, },
+      { field: `bDescriptorType`, index: 1, size: 1, },
     ];
   }
 
@@ -127,16 +119,20 @@ class UnknownDescriptor extends UsbBaseNode {
 class DeviceDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Device`, rawData );
-    this.fields.push( {
-      field: `idVendor`,
-      index: 8,
-      size: 2,
-    });
-    this.fields.push( {
-      field: `idProduct`,
-      index: 10,
-      size: 2,
-    });
+    this.fields.push(
+      { field: `bcdUSB`, index: 2, size: 2, },
+      { field: `bDeviceClass`, index: 4, size: 1, },
+      { field: `bDeviceSubClass`, index: 5, size: 1, },
+      { field: `bDeviceProtocol`, index: 6, size: 1, },
+      { field: `bMaxPacketSize`, index: 7, size: 1, },
+      { field: `idVendor`, index: 8, size: 2, },
+      { field: `idProduct`, index: 10, size: 2, },
+      { field: `bcdDevice`, index: 12, size: 2, },
+      { field: `iManufacturer`, index: 14, size: 1, },
+      { field: `iProduct`, index: 15, size: 1, },
+      { field: `iSerialNumber`, index: 16, size: 1, },
+      { field: `bNumConfigurations`, index: 17, size: 1, },
+    );
   }
 
   Verify = () => {
@@ -149,11 +145,14 @@ class DeviceDescriptor extends UsbBaseNode {
 class ConfigurationDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Configuration`, rawData );
-    this.fields.push( {
-      field: `wTotalLength`,
-      index: 2,
-      size: 2,
-    });
+    this.fields.push(
+      { field: `wTotalLength`, index: 2, size: 2, },
+      { field: `bNumInterfaces`, index: 4, size: 1, },
+      { field: `bConfigurationValue`, index: 5, size: 1, },
+      { field: `iConfiguration`, index: 6, size: 1, },
+      { field: `bmAttributes`, index: 7, size: 1, },
+      { field: `bMaxPower`, index: 8, size: 1, },
+    );
   }
 
   Verify = () => {
@@ -166,31 +165,15 @@ class ConfigurationDescriptor extends UsbBaseNode {
 class InterfaceDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Interface`, rawData );
-    this.fields.push( {
-      field: `bInterfaceNumber`,
-      index: 2,
-      size: 1,
-    });
-    this.fields.push( {
-      field: `bAlternateSetting`,
-      index: 3,
-      size: 1,
-    });
-    this.fields.push( {
-      field: `bNumEndpoints`,
-      index: 4,
-      size: 1,
-    });
-    this.fields.push( {
-      field: `bInterfaceClass`,
-      index: 5,
-      size: 1,
-    });
-    this.fields.push( {
-      field: `bInterfaceSubClass`,
-      index: 6,
-      size: 1,
-    });
+    this.fields.push(
+      { field: `bInterfaceNumber`, index: 2, size: 1, },
+      { field: `bAlternateSetting`, index: 3, size: 1, },
+      { field: `bNumEndpoints`, index: 4, size: 1, },
+      { field: `bInterfaceClass`, index: 5, size: 1, },
+      { field: `bInterfaceSubClass`, index: 6, size: 1, },
+      { field: `bInterfaceProtocol`, index: 7, size: 1, },
+      { field: `iInterface`, index: 8, size: 1, },
+    );
   }
 
   Verify = () => {
@@ -202,6 +185,12 @@ class InterfaceDescriptor extends UsbBaseNode {
 class EndpointDescriptor extends UsbBaseNode {
   constructor(rawData) {
     super( `Endpoint`, rawData );
+    this.fields.push(
+      { field: `bEndpointAddress`, index: 2, size: 1, },
+      { field: `bmAttributes`, index: 3, size: 1, },
+      { field: `wMaxPacketSize`, index: 4, size: 2, },
+      { field: `bInterval`, index: 6, size: 1, },
+    );
   }
 
   Verify = () => {
@@ -224,31 +213,14 @@ class SuperSpeedEndpointCompanionDescriptor extends UsbBaseNode {
 class InterfaceAssosciationDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Interface Association`, rawData );
-    this.fields.push( {
-      field: `bFirstInterface`,
-      index: 2,
-      size: 1,
-    });
-    this.fields.push( {
-      field: `bInterfaceCount`,
-      index: 3,
-      size: 1,
-    });
-    this.fields.push( {
-      field: `bFunctionClass`,
-      index: 4,
-      size: 1,
-    });
-    this.fields.push( {
-      field: `bFunctionSubclass`,
-      index: 5,
-      size: 1,
-    });
-    this.fields.push( {
-      field: `bFunctionProtocol`,
-      index: 6,
-      size: 1,
-    });
+    this.fields.push( 
+      { field: `bFirstInterface`, index: 2, size: 1, },
+      { field: `bInterfaceCount`, index: 3, size: 1, },
+      { field: `bFunctionClass`, index: 4, size: 1, },
+      { field: `bFunctionSubclass`, index: 5, size: 1, },
+      { field: `bFunctionProtocol`, index: 6, size: 1, },
+      { field: `iFunction`, index: 7, size: 1, },
+    );
   }
 
   Verify = () => {
