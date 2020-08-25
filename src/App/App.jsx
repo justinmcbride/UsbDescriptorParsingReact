@@ -7,6 +7,7 @@ import HexValue from '../HexValue/HexValue';
 import AsciiValue from '../AsciiValue/AsciiValue';
 import DescriptorTable from '../DescriptorTable/DescriptorTable';
 
+const ENABLE_TABLE = false;
 const NUMBER_OF_VALUES = 61;
 
 const CreateFakeData = () => {
@@ -116,6 +117,26 @@ const App = () => {
     });
   };
 
+  let table = null;
+  if( ENABLE_TABLE === true ) {
+    table =
+      <div id="tableContainer">
+        <div className="hexContainer">
+          <h1>Hexadecimal</h1>
+          <div className="dataContainer">
+            { makeRows("hex") }
+          </div>
+        </div>\
+        <div className="asciiContainer">
+          <h1>ASCII</h1>
+          <div className="dataContainer">
+            { makeRows("ascii") }
+          </div>
+        </div>
+      </div>
+    ;
+  }
+
   return (
     <div>
       <Dropzone onDrop={onDrop}>
@@ -131,20 +152,7 @@ const App = () => {
       <Download file="export.bin" content={ new Uint8Array(values) }>
           <button type="button">Export</button>
         </Download>
-      {/* <div id="tableContainer">
-        <div className="hexContainer">
-          <h1>Hexadecimal</h1>
-          <div className="dataContainer">
-            { makeRows("hex") }
-          </div>
-        </div>
-        <div className="asciiContainer">
-          <h1>ASCII</h1>
-          <div className="dataContainer">
-            { makeRows("ascii") }
-          </div>
-        </div>
-      </div> */}
+      { table }
       <DescriptorTable rawData={values}/>
     </div>
   );
