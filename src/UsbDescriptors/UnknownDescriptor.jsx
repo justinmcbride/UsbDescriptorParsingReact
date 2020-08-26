@@ -3,10 +3,11 @@ import React from 'react';
 import UsbDescriptor from './UsbDescriptor';
 import { Accordion } from 'react-bootstrap';
 
-const UnknownDescriptor = ( { node, index, children } ) =>
+const UnknownDescriptor = ( { node, index, children, childrenNodes } ) =>
 {
   const fieldItems = [];
   
+  // map!
   if( node.fields && node.fields !== null ) {
     for( const field of node.fields ) {
       fieldItems.push(
@@ -21,11 +22,9 @@ const UnknownDescriptor = ( { node, index, children } ) =>
   // switch to map
 
   return (
-    <UsbDescriptor node={node} key={index} index={index}>
+    <UsbDescriptor node={node} key={index} index={index} childrenNodes={childrenNodes}>
       { fieldItems }
-      <Accordion>
-        { children }
-      </Accordion>
+      { children }
     </UsbDescriptor>
   );
 }

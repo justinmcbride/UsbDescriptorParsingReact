@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card';
 import Accordion from 'react-bootstrap/Accordion';
 import Table from 'react-bootstrap/Table'
 
-const UsbDescriptor = ( { children, node, index } ) =>
+const UsbDescriptor = ( { children, node, index, childrenNodes } ) =>
 {
   const dataView = new Uint8Array( node.rawData );
 
@@ -35,6 +35,9 @@ const UsbDescriptor = ( { children, node, index } ) =>
         <Card.Body>
           <span>Data Length: {dataView.byteLength}</span>
           { tableElement }
+          <Accordion>
+            { childrenNodes }
+          </Accordion>
         </Card.Body>
       </Accordion.Collapse>
     </Card>

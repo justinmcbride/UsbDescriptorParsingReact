@@ -36,8 +36,8 @@ const DescriptorTable = ( {rawData} ) =>
         <UnknownDescriptor
           node={node}
           key={index}
-          index={index}>
-            {descriptorList}
+          index={index}
+          childrenNodes={descriptorList}>
         </UnknownDescriptor>
       );
     }
