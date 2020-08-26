@@ -1,8 +1,9 @@
 import React from 'react';
 
 import UsbDescriptor from './UsbDescriptor';
+import { Accordion } from 'react-bootstrap';
 
-const UnknownDescriptor = ( { node, index } ) =>
+const UnknownDescriptor = ( { node, index, children } ) =>
 {
   const fieldItems = [];
   
@@ -22,6 +23,9 @@ const UnknownDescriptor = ( { node, index } ) =>
   return (
     <UsbDescriptor node={node} key={index} index={index}>
       { fieldItems }
+      <Accordion>
+        { children }
+      </Accordion>
     </UsbDescriptor>
   );
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import _ from 'lodash';
 
 import UnknownDescriptor from '../UsbDescriptors/UnknownDescriptor';
 
@@ -15,35 +16,39 @@ const DescriptorTable = ( {rawData} ) =>
   console.log( `-----------Parsed-----------` );
   console.log( output );
 
-  const descriptorList = [];
-  let index = 1;
-  const TransformNodes = (node) => {
+
+  const TransformNodes = (node, index) => {
+
+    const descriptorList = _.map(node.children, (childNode, index) => {
+      return TransformNodes( childNode, index+1 );
+    });
+
     if( node.type === "Root" ) {
-      // skip
+      // don't create a card for root
+      return (
+        <Accordion>
+          { descriptorList }
+        </Accordion>
+      );
     }
     else {
-      descriptorList.push(
+      return (
         <UnknownDescriptor
           node={node}
           key={index}
-          index={index}
-        />
+          index={index}>
+            {descriptorList}
+        </UnknownDescriptor>
       );
-      index++;
-    }
-
-    for( let childNode of node.children ) {
-      TransformNodes( childNode );
     }
   };
-  TransformNodes( parsedDevice );
+
+  const descriptorList = TransformNodes( parsedDevice, 1 );
 
   return (
     <div>
       <h1>Descriptors</h1>
-      <Accordion>
-        { descriptorList }
-      </Accordion>
+      { descriptorList }
     </div>
   );
 };
