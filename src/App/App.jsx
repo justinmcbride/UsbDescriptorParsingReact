@@ -2,6 +2,8 @@ import React, { useState, useCallback } from 'react';
 import Dropzone from 'react-dropzone'
 import Download from '@axetroy/react-download';
 
+import Button from 'react-bootstrap/Button'
+
 import './App.css';
 import HexValue from '../HexValue/HexValue';
 import AsciiValue from '../AsciiValue/AsciiValue';
@@ -144,14 +146,18 @@ const App = () => {
           <section>
             <span {...getRootProps()}>
               <input {...getInputProps()} />
-              <button type="button">Import</button>
+              <Button variant="outline-primary" size="lg" block>
+                Import Data File
+              </Button>
             </span>
           </section>
         )}
       </Dropzone>
       <Download file="export.bin" content={ new Uint8Array(values) }>
-          <button type="button">Export</button>
-        </Download>
+        <Button variant="outline-primary" size="lg" block>
+          Export Data
+        </Button>
+      </Download>
       { table }
       <DescriptorTable rawData={values}/>
     </div>

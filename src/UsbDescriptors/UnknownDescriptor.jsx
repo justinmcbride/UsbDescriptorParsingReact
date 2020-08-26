@@ -1,25 +1,18 @@
 import React from 'react';
+import _ from 'lodash';
 
 import UsbDescriptor from './UsbDescriptor';
-import { Accordion } from 'react-bootstrap';
 
 const UnknownDescriptor = ( { node, index, children, childrenNodes } ) =>
 {
-  const fieldItems = [];
-  
-  // map!
-  if( node.fields && node.fields !== null ) {
-    for( const field of node.fields ) {
-      fieldItems.push(
-        <tr key={field.field}>
-          <td>{field.field}</td>
-          <td>{node.retrieve(field.field)}</td>
-        </tr>
-      );
-    }
-  }
-
-  // switch to map
+   const fieldItems = _.map(node.fields, (field, index) => {
+    return(
+      <tr key={index}>
+        <td>{field.field}</td>
+        <td>{node.retrieve(field.field)}</td>
+      </tr>
+    );
+  });
 
   return (
     <UsbDescriptor node={node} key={index} index={index} childrenNodes={childrenNodes}>
