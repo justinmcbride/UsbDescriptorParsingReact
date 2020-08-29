@@ -1,6 +1,6 @@
-const _ = require('lodash');
+import _ from 'lodash';
 
-class TreeNode {
+export class TreeNode {
   constructor(type) {
     this.children = [];
     this.type = type ?? "Unknown TreeNode";
@@ -26,7 +26,7 @@ class TreeNode {
   }
 };
 
-class RootNode extends TreeNode {
+export class RootNode extends TreeNode {
   constructor() {
     super( `Root` );
     this.children = [];
@@ -37,7 +37,7 @@ class RootNode extends TreeNode {
   }
 };
 
-class DanglingDataNode extends TreeNode {
+export class DanglingDataNode extends TreeNode {
   constructor( rawData ) {
     super( `Dangling Data` );
     this.rawData = new Uint8Array( rawData );
@@ -51,7 +51,7 @@ class DanglingDataNode extends TreeNode {
   }
 }
 
-class UsbBaseNode extends TreeNode {
+export class UsbBaseNode extends TreeNode {
   constructor( type, rawData ) {
     super( type );
     this.rawData = new Uint8Array( rawData );
@@ -110,13 +110,13 @@ class UsbBaseNode extends TreeNode {
   }
 };
 
-class UnknownDescriptor extends UsbBaseNode {
+export class UnknownDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Unknown Descriptor`, rawData );
   }
 }
 
-class DeviceDescriptor extends UsbBaseNode {
+export class DeviceDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Device`, rawData );
     this.fields.push(
@@ -142,7 +142,7 @@ class DeviceDescriptor extends UsbBaseNode {
   }
 };
 
-class ConfigurationDescriptor extends UsbBaseNode {
+export class ConfigurationDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Configuration`, rawData );
     this.fields.push(
@@ -162,7 +162,7 @@ class ConfigurationDescriptor extends UsbBaseNode {
   }
 }
 
-class InterfaceDescriptor extends UsbBaseNode {
+export class InterfaceDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Interface`, rawData );
     this.fields.push(
@@ -182,7 +182,7 @@ class InterfaceDescriptor extends UsbBaseNode {
   }
 };
 
-class EndpointDescriptor extends UsbBaseNode {
+export class EndpointDescriptor extends UsbBaseNode {
   constructor(rawData) {
     super( `Endpoint`, rawData );
     this.fields.push(
@@ -199,7 +199,7 @@ class EndpointDescriptor extends UsbBaseNode {
   }
 };
 
-class SuperSpeedEndpointCompanionDescriptor extends UsbBaseNode {
+export class SuperSpeedEndpointCompanionDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `SS Endpoint Companion`, rawData );
   }
@@ -210,14 +210,14 @@ class SuperSpeedEndpointCompanionDescriptor extends UsbBaseNode {
   }
 };
 
-class InterfaceAssosciationDescriptor extends UsbBaseNode {
+export class InterfaceAssosciationDescriptor extends UsbBaseNode {
   constructor( rawData ) {
     super( `Interface Association`, rawData );
     this.fields.push( 
       { field: `bFirstInterface`, index: 2, size: 1, },
       { field: `bInterfaceCount`, index: 3, size: 1, },
       { field: `bFunctionClass`, index: 4, size: 1, },
-      { field: `bFunctionSubclass`, index: 5, size: 1, },
+      { field: `bFunctionSubexport class`, index: 5, size: 1, },
       { field: `bFunctionProtocol`, index: 6, size: 1, },
       { field: `iFunction`, index: 7, size: 1, },
     );
@@ -230,15 +230,3 @@ class InterfaceAssosciationDescriptor extends UsbBaseNode {
   }
 };
 
-module.exports = {
-  DanglingDataNode: DanglingDataNode,
-  RootNode: RootNode,
-  UsbBaseNode: UsbBaseNode,
-  UnknownDescriptor: UnknownDescriptor,
-  DeviceDescriptor: DeviceDescriptor,
-  ConfigurationDescriptor: ConfigurationDescriptor,
-  InterfaceDescriptor: InterfaceDescriptor,
-  EndpointDescriptor: EndpointDescriptor,
-  SuperSpeedEndpointCompanionDescriptor: SuperSpeedEndpointCompanionDescriptor,
-  InterfaceAssosciationDescriptor: InterfaceAssosciationDescriptor,
-};

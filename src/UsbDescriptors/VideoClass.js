@@ -1,8 +1,8 @@
-const Usb = require( './UsbNodes' );
+import * as Usb from './UsbNodes';
 
 // Video Streaming
 
-class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
+export class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Input Header`, rawData );
     this.fields.push(
@@ -20,31 +20,31 @@ class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
   }
 };
 
-class UvcVsFormatUncompressedDescriptor extends Usb.UsbBaseNode {
+export class UvcVsFormatUncompressedDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Format Uncompressed`, rawData );
   }
 };
 
-class UvcVsFrameUncompressedDescriptor extends Usb.UsbBaseNode {
+export class UvcVsFrameUncompressedDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Frame Uncompressed`, rawData );
   }
 };
 
-class UvcVsFormatMjpegDescriptor extends Usb.UsbBaseNode {
+export class UvcVsFormatMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Format Mjpeg`, rawData );
   }
 };
 
-class UvcVsFrameMjpegDescriptor extends Usb.UsbBaseNode {
+export class UvcVsFrameMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Frame Mjpeg`, rawData );
   }
 };
 
-class UvcVsColorFormatDescriptor extends Usb.UsbBaseNode {
+export class UvcVsColorFormatDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Color Format`, rawData );
     this.fields.push(
@@ -58,53 +58,53 @@ class UvcVsColorFormatDescriptor extends Usb.UsbBaseNode {
 
 // Video Control
 
-class UvcVcHeaderDescriptor extends Usb.UsbBaseNode {
+export class UvcVcHeaderDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Control Header`, rawData );
   }
 };
 
-class UvcVcInputTerminalDecsriptor extends Usb.UsbBaseNode {
+export class UvcVcInputTerminalDecsriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Control Input Terminal`, rawData );
   }
 };
 
-class UvcVcOutputTerminalDescriptor extends Usb.UsbBaseNode {
+export class UvcVcOutputTerminalDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Control Output Terminal`, rawData );
   }
 };
 
-class UvcVcSelectorUnitDescriptor extends Usb.UsbBaseNode {
+export class UvcVcSelectorUnitDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Control Selector Unit`, rawData );
   }
 };
 
-class UvcVcProcessingUnitDescriptor extends Usb.UsbBaseNode {
+export class UvcVcProcessingUnitDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Control Processing Unit`, rawData );
   }
 };
 
-class UvcVcExtensionUnitDescriptor extends Usb.UsbBaseNode {
+export class UvcVcExtensionUnitDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Control Extension Unit`, rawData );
   }
 };
 
-module.exports = {
-  UvcVsInputHeaderDescriptor: UvcVsInputHeaderDescriptor,
-  UvcVsFormatUncompressedDescriptor: UvcVsFormatUncompressedDescriptor,
-  UvcVsFrameUncompressedDescriptor: UvcVsFrameUncompressedDescriptor,
-  UvcVsFormatMjpegDescriptor: UvcVsFormatMjpegDescriptor,
-  UvcVsFrameMjpegDescriptor: UvcVsFrameMjpegDescriptor,
-  UvcVsColorFormatDescriptor: UvcVsColorFormatDescriptor,
-  UvcVcHeaderDescriptor : UvcVcHeaderDescriptor,
-  UvcVcInputTerminalDecsriptor : UvcVcInputTerminalDecsriptor,
-  UvcVcOutputTerminalDescriptor : UvcVcOutputTerminalDescriptor,
-  UvcVcSelectorUnitDescriptor : UvcVcSelectorUnitDescriptor,
-  UvcVcProcessingUnitDescriptor : UvcVcProcessingUnitDescriptor,
-  UvcVcExtensionUnitDescriptor : UvcVcExtensionUnitDescriptor,
+export default {
+  UvcVsInputHeaderDescriptor,
+  UvcVsFormatUncompressedDescriptor,
+  UvcVsFrameUncompressedDescriptor,
+  UvcVsFormatMjpegDescriptor,
+  UvcVsFrameMjpegDescriptor,
+  UvcVsColorFormatDescriptor,
+  UvcVcHeaderDescriptor,
+  UvcVcInputTerminalDecsriptor,
+  UvcVcOutputTerminalDescriptor,
+  UvcVcSelectorUnitDescriptor,
+  UvcVcProcessingUnitDescriptor,
+  UvcVcExtensionUnitDescriptor,
 };

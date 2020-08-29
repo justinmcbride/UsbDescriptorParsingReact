@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm install
+      - name: Build Production Package
+        run: npm run-script build
+      - name: Deploy to Server
+        env:
+          SSH_SERVER_KEY: ${{ secrets.SSH_SERVER_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan mcbride.io > ~/.ssh/known_hosts
+          echo "$SSH_SERVER_KEY" > key.key
+          chmod  400 key.key
+          scp -i key.key -r build/* ubuntu@mcbride.io:/var/www/mcbride.io/react

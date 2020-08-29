@@ -1,8 +1,7 @@
-const UsbConstants = require('./UsbConstants');
+import UsbConstants from './UsbConstants';
 
-const Usb = require( './UsbNodes' );
-const Uvc = require( './VideoClass' );
-
+import * as Usb from './UsbNodes';
+import * as Uvc from './VideoClass';
 
 const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
   if( rawData.length < 2 ) {
@@ -120,7 +119,7 @@ const ParseFormatTree = ( currentNode, rawData, validChildren ) => {
   return rawData.length;
 };
 
-const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) => {
+export const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) => {
   const dataView = new Uint8Array( rawData );
   for( let currentOffset = 0; currentOffset < dataView.length; ) {
     if( currentOffset + 2 >= dataView.length ) {
@@ -176,8 +175,3 @@ const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) =>
     currentOffset += bLength;
   }
 }
-
-module.exports = {
-  NodeFactory: NodeFactory,
-  ParseTree: ParseTree,
-};

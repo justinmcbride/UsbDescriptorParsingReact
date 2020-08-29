@@ -5,8 +5,8 @@ import UnknownDescriptor from '../UsbDescriptors/UnknownDescriptor';
 
 import Accordion from 'react-bootstrap/Accordion';
 
-const { ParseTree } = require('../UsbDescriptors/DescriptorFactory');
-const { RootNode } = require('../UsbDescriptors/UsbNodes');
+import { ParseTree } from '../UsbDescriptors/DescriptorFactory';
+import { RootNode } from '../UsbDescriptors/UsbNodes';
 
 const DescriptorTable = ( {rawData} ) =>
 {

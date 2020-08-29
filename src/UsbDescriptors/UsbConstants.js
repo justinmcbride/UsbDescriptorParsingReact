@@ -87,7 +87,7 @@ const Uvc11 = {
   }
 };
 
-module.exports = Object.freeze({
+export default Object.freeze({
   DescriptorType: DescriptorType,
   Class: Class,
   Uvc11: Uvc11,
