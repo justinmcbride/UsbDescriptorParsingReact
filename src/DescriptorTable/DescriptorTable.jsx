@@ -16,7 +16,7 @@ const DescriptorTable = ({rawData}) =>
   const parsedDevice = new RootNode();
   ParseTree( parsedDevice, rawData );
 
-  const logger = useEffect(() => {
+  useEffect(() => {
     const output = parsedDevice.PrintTreeFromHere(0);
     console.log( `-----------Parsed-----------` );
     console.log( output );
