@@ -5,11 +5,9 @@ import Download from '@axetroy/react-download';
 import Button from 'react-bootstrap/Button'
 
 import './App.css';
-import HexValue from '../HexValue/HexValue';
-import AsciiValue from '../AsciiValue/AsciiValue';
+import DataTable from '../DataTable/DataTable'
 import DescriptorTable from '../DescriptorTable/DescriptorTable';
 
-const ENABLE_TABLE = false;
 const NUMBER_OF_VALUES = 61;
 
 const CreateFakeData = () => {
@@ -24,10 +22,8 @@ const CreateFakeData = () => {
 }
 
 const App = () => {
-  // TODO: optimize setValues from setting full array
   const [values, setValues] = useState(CreateFakeData());
-  const [whichHovered, setWhichHovered] = useState();
-
+  
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file) => {
       const reader = new FileReader();
@@ -46,18 +42,8 @@ const App = () => {
     
   }, []);
 
-  const onMouseEnter = (index) => {
-    // console.log( `app informed of mouseEnter on [${row},${column}]`);
-    setWhichHovered(index);
-  };
 
-  const onMouseLeave = (index) => {
-    // possible race condition here i guess?
-    // console.log( `app informed of mouseLeave on [${row},${column}]`);
-    setWhichHovered(null);
-  };
-
-  const valueChanged = (itemIndex, newValue) => {
+  const onValueChanged = (itemIndex, newValue) => {
     setValues(
       values.map( (originalValue, index) =>
         index === itemIndex
@@ -66,78 +52,6 @@ const App = () => {
       )
     );
   };
-
-  const makeRows = (dataStyle) => {
-    const itemsPerRow = 8; // TODO: window.clientWidth / fontSize / 0x00 4 char
-    const rowCount = Math.ceil(values.length / itemsPerRow);
-    const rowIndexes = [...Array(rowCount).keys()]; // range()
-
-    return rowIndexes.map( rowIdx => {
-      const startIdx = rowIdx * itemsPerRow;
-      const endIdx = Math.min(startIdx + itemsPerRow, values.length);
-
-      const rowClassName = ( whichHovered && whichHovered >= startIdx && whichHovered < endIdx ) ? "DataRow RowHovered" : "DataRow RowNowHovered";
-    
-      return (
-        <div key = { rowIdx } className = { rowClassName }>
-          { makeColumns(values.slice(startIdx, endIdx), startIdx, dataStyle) }
-        </div>
-      );
-    })
-  }
-
-  const makeColumns = (values, baseIdx, dataStyle) => {
-    return values.map( (value, colIdx) => {
-      const actualIndex = baseIdx + colIdx;
-      if ( dataStyle === "ascii" ) {
-        return <AsciiValue
-          key = { actualIndex }
-          index = { actualIndex }
-          value = { value }
-          dataStyle = { dataStyle }
-          hovered = { whichHovered === actualIndex  }
-          mouseEnter = { onMouseEnter }
-          mouseLeave = { onMouseLeave }
-          valueChanged = { valueChanged }
-        />
-      }
-      else if ( dataStyle === "hex" ) {
-        return <HexValue
-          key = { actualIndex }
-          index = { actualIndex }
-          value = { value }
-          dataStyle = { dataStyle }
-          hovered = { whichHovered === actualIndex  }
-          mouseEnter = { onMouseEnter }
-          mouseLeave = { onMouseLeave }
-          valueChanged = { valueChanged }
-        />
-      }
-      else {
-        return <div></div>
-      }
-    });
-  };
-
-  let table = null;
-  if( ENABLE_TABLE === true ) {
-    table =
-      <div id="tableContainer">
-        <div className="hexContainer">
-          <h1>Hexadecimal</h1>
-          <div className="dataContainer">
-            { makeRows("hex") }
-          </div>
-        </div>\
-        <div className="asciiContainer">
-          <h1>ASCII</h1>
-          <div className="dataContainer">
-            { makeRows("ascii") }
-          </div>
-        </div>
-      </div>
-    ;
-  }
 
   return (
     <div>
@@ -158,8 +72,15 @@ const App = () => {
           Export Data
         </Button>
       </Download>
-      { table }
-      <DescriptorTable rawData={values}/>
+      <div class="blockContainer">
+        <DataTable
+          valueChanged={onValueChanged}
+          dataValues={values}
+        />
+        <DescriptorTable
+          rawData={values}
+        />
+      </div>
     </div>
   );
 }
