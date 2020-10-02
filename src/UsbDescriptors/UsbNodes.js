@@ -1,5 +1,7 @@
 import _ from 'lodash';
 
+import UsbConstants from './UsbConstants';
+
 export class TreeNode {
   constructor(type) {
     this.children = [];
@@ -55,6 +57,7 @@ export class UsbBaseNode extends TreeNode {
   constructor( type, rawData ) {
     super( type );
     this.rawData = new Uint8Array( rawData );
+    this.dataView = new DataView( this.rawData.buffer );
     this.fields = [
       { field: `bLength`, index: 0, size: 1, },
       { field: `bDescriptorType`, index: 1, size: 1, },
@@ -69,19 +72,19 @@ export class UsbBaseNode extends TreeNode {
       return null;
     }
 
-    let dataView = 0;
+    let dataValue = 0;
     if( fieldItem.size === 1 ) {
-      dataView = new Uint8Array( this.rawData.buffer, fieldItem.index, 1 );
+      dataValue = this.dataView.getUint8(fieldItem.index);
     } else if( fieldItem.size === 2 ) {
-      dataView = new Uint16Array( this.rawData.buffer, fieldItem.index, 1 );
+      dataValue = this.dataView.getUint16(fieldItem.index, true);
     }  else if( fieldItem.size === 4 ) {
-      dataView = new Uint32Array( this.rawData.buffer, fieldItem.index, 1 );
+      dataValue = this.dataView.getUint32(fieldItem.index, true);
     }
     else {
       // meh?
       debugger;
     }
-    return dataView[0];
+    return dataValue;
   }
 
   bLength = () => {
@@ -135,6 +138,14 @@ export class DeviceDescriptor extends UsbBaseNode {
     );
   }
 
+  bcdUSB = () => {
+    const bcd = this.retrieve('bcdUSB');
+    const major = ( bcd & 0xff00 ) >> 8;
+    const minor = ( bcd & 0x00f0 ) >> 4;
+    const submr = ( bcd & 0x000f );
+    return `${major}.${minor}.${submr}`;
+  }
+
   Verify = () => {
     // TODO: verify structure is correct
     if( this.rawData.byteLength !== 18 ) return false;
@@ -174,11 +185,21 @@ export class InterfaceDescriptor extends UsbBaseNode {
       { field: `bInterfaceProtocol`, index: 7, size: 1, },
       { field: `iInterface`, index: 8, size: 1, },
     );
+
+    const classValue = _.find(UsbConstants.Class, (item) => {
+      return item.value === this.retrieve(`bInterfaceClass`);
+    });
+    if (classValue === undefined ) debugger;
+    this.className = classValue.string;
   }
 
   Verify = () => {
     if( this.rawData.byteLength !== 9 ) return false;
     return true;
+  }
+
+  ClassName = () => {
+    return this.className;
   }
 };
 
@@ -217,7 +238,7 @@ export class InterfaceAssosciationDescriptor extends UsbBaseNode {
       { field: `bFirstInterface`, index: 2, size: 1, },
       { field: `bInterfaceCount`, index: 3, size: 1, },
       { field: `bFunctionClass`, index: 4, size: 1, },
-      { field: `bFunctionSubexport class`, index: 5, size: 1, },
+      { field: `bFunctionSubclass`, index: 5, size: 1, },
       { field: `bFunctionProtocol`, index: 6, size: 1, },
       { field: `iFunction`, index: 7, size: 1, },
     );

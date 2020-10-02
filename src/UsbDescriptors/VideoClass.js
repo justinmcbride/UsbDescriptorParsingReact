@@ -93,18 +93,3 @@ export class UvcVcExtensionUnitDescriptor extends Usb.UsbBaseNode {
     super( `Video Control Extension Unit`, rawData );
   }
 };
-
-export default {
-  UvcVsInputHeaderDescriptor,
-  UvcVsFormatUncompressedDescriptor,
-  UvcVsFrameUncompressedDescriptor,
-  UvcVsFormatMjpegDescriptor,
-  UvcVsFrameMjpegDescriptor,
-  UvcVsColorFormatDescriptor,
-  UvcVcHeaderDescriptor,
-  UvcVcInputTerminalDecsriptor,
-  UvcVcOutputTerminalDescriptor,
-  UvcVcSelectorUnitDescriptor,
-  UvcVcProcessingUnitDescriptor,
-  UvcVcExtensionUnitDescriptor,
-};

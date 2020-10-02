@@ -2,6 +2,7 @@ import UsbConstants from './UsbConstants';
 
 import * as Usb from './UsbNodes';
 import * as Uvc from './VideoClass';
+import * as Uac from './AudioClass';
 
 const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
   if( rawData.length < 2 ) {
@@ -36,47 +37,78 @@ const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
     return new Usb.InterfaceAssosciationDescriptor( rawData );
   }
   else {
-    if( interfaceClass === UsbConstants.Uvc11.Class ) {
-      if( bDescriptorType === UsbConstants.Uvc11.DescriptorType.Interface ) {
+    if( interfaceClass === UsbConstants.Class.Video.value ) {
+      if( bDescriptorType === UsbConstants.Class.Video.DescriptorType.Interface ) {
         const bDescriptorSubType = rawData[2];
-        if( interfaceSubclass === UsbConstants.Uvc11.Subclass.VideoControl ) {
-          if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.Header ) {
+        if( interfaceSubclass === UsbConstants.Class.Video.Subclass.VideoControl ) {
+          if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.Header ) {
             return new Uvc.UvcVcHeaderDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.InputTerminal ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.InputTerminal ) {
             return new Uvc.UvcVcInputTerminalDecsriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.OutputTerminal ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.OutputTerminal ) {
             return new Uvc.UvcVcOutputTerminalDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.SelectorUnit ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.SelectorUnit ) {
             return new Uvc.UvcVcSelectorUnitDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.ProcessingUnit ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.ProcessingUnit ) {
             return new Uvc.UvcVcProcessingUnitDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VcDescriptorSubType.ExtensionUnit ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.ExtensionUnit ) {
             return new Uvc.UvcVcExtensionUnitDescriptor( rawData );
           }
         }
-        else if( interfaceSubclass === UsbConstants.Uvc11.Subclass.VideoStreaming ) {
-          if( bDescriptorSubType === UsbConstants.Uvc11.VsDescriptorSubType.InputHeader ) {
+        else if( interfaceSubclass === UsbConstants.Class.Video.Subclass.VideoStreaming ) {
+          if( bDescriptorSubType === UsbConstants.Class.Video.VsDescriptorSubType.InputHeader ) {
             return new Uvc.UvcVsInputHeaderDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VsDescriptorSubType.FormatUncompressed ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VsDescriptorSubType.FormatUncompressed ) {
             return new Uvc.UvcVsFormatUncompressedDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VsDescriptorSubType.FrameUncompressed ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VsDescriptorSubType.FrameUncompressed ) {
             return new Uvc.UvcVsFrameUncompressedDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VsDescriptorSubType.FormatMjpeg ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VsDescriptorSubType.FormatMjpeg ) {
             return new Uvc.UvcVsFormatMjpegDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VsDescriptorSubType.FrameMjpeg ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VsDescriptorSubType.FrameMjpeg ) {
             return new Uvc.UvcVsFrameMjpegDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Uvc11.VsDescriptorSubType.ColorFormat ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VsDescriptorSubType.ColorFormat ) {
             return new Uvc.UvcVsColorFormatDescriptor( rawData );
+          }
+        }
+      }
+    }
+    else if( interfaceClass === UsbConstants.Class.Audio.value ) {
+      if( bDescriptorType === UsbConstants.Class.Audio.DescriptorType.Interface ) {
+        const bDescriptorSubType = rawData[2];
+        if( interfaceSubclass === UsbConstants.Class.Audio.Subclass.AudioControl ) {
+          if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.Header ) {
+            return new Uac.UacAcHeaderDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.InputTerminal ) {
+            return new Uac.UacAcInputTerminalDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.OutputTerminal ) {
+            return new Uac.UacAcOutputTerminalDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.MixerUnit ) {
+            return new Uac.UacAcMixerUnitDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.SelectorUnit ) {
+            return new Uac.UacAcSelectorUnitDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.FeatureUnit ) {
+            return new Uac.UacAcFeatureUnitDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.ProcessingUnit ) {
+            return new Uac.UacAcProcessingUnitDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.ExtensionUnit ) {
+            return new Uac.UacAcExtensionUnitDescriptor( rawData );
           }
         }
       }
@@ -103,13 +135,13 @@ const ParseFormatTree = ( currentNode, rawData, validChildren ) => {
 
     const thisDescriptor = dataView.slice( currentOffset, currentOffset + bLength );
     const bDescriptorSubType = thisDescriptor[2];
-    if( bDescriptorType !== UsbConstants.Uvc11.DescriptorType.Interface || !validChildren.includes( bDescriptorSubType ) )
+    if( bDescriptorType !== UsbConstants.Class.Video.DescriptorType.Interface || !validChildren.includes( bDescriptorSubType ) )
     {
         // probably a sibling for the format
         return currentOffset;
     }
 
-    const newChildNode = NodeFactory( thisDescriptor, UsbConstants.Uvc11.Class, UsbConstants.Uvc11.Subclass.VideoStreaming );
+    const newChildNode = NodeFactory( thisDescriptor, UsbConstants.Class.Video.Class, UsbConstants.Class.Video.Subclass.VideoStreaming );
 
     currentNode.children.push( newChildNode );
     currentOffset += bLength;
@@ -160,13 +192,13 @@ export const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubcla
     }
     else if( newChildNode instanceof Uvc.UvcVsFormatUncompressedDescriptor ) {
       const childData = dataView.slice( currentOffset + newChildNode.bLength() );
-      const validChildren = [UsbConstants.Uvc11.VsDescriptorSubType.FrameUncompressed, UsbConstants.Uvc11.VsDescriptorSubType.ColorFormat ];
+      const validChildren = [UsbConstants.Class.Video.VsDescriptorSubType.FrameUncompressed, UsbConstants.Class.Video.VsDescriptorSubType.ColorFormat ];
       const childrenLength = ParseFormatTree( newChildNode, childData, validChildren );
       currentOffset += childrenLength;
     }
     else if( newChildNode instanceof Uvc.UvcVsFormatMjpegDescriptor ) {
       const childData = dataView.slice( currentOffset + newChildNode.bLength() );
-      const validChildren = [UsbConstants.Uvc11.VsDescriptorSubType.FrameMjpeg, UsbConstants.Uvc11.VsDescriptorSubType.ColorFormat ];
+      const validChildren = [UsbConstants.Class.Video.VsDescriptorSubType.FrameMjpeg, UsbConstants.Class.Video.VsDescriptorSubType.ColorFormat ];
       const childrenLength = ParseFormatTree( newChildNode, childData, validChildren );
       currentOffset += childrenLength;
     }

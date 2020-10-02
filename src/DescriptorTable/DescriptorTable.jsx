@@ -4,6 +4,8 @@ import _ from 'lodash';
 import Accordion from 'react-bootstrap/Accordion';
 
 import UnknownDescriptor from '../UsbDescriptors/UnknownDescriptor';
+import DeviceDescriptor from '../UsbDescriptors/DeviceDescriptor';
+import InterfaceDescriptor from '../UsbDescriptors/InterfaceDescriptor';
 import { ParseTree } from '../UsbDescriptors/DescriptorFactory';
 import { RootNode } from '../UsbDescriptors/UsbNodes';
 
@@ -35,14 +37,34 @@ const DescriptorTable = ({rawData}) =>
         </Accordion>
       );
     }
+    else if( node.type === `Device` ) {
+      return (
+        <DeviceDescriptor
+          node={node}
+          key={index}
+          index={index}
+          childrenNodes={descriptorList}
+        />
+      );
+    }
+    else if( node.type === `Interface` ) {
+      return (
+        <InterfaceDescriptor
+          node={node}
+          key={index}
+          index={index}
+          childrenNodes={descriptorList}
+        />
+      );
+    }
     else {
       return (
         <UnknownDescriptor
           node={node}
           key={index}
           index={index}
-          childrenNodes={descriptorList}>
-        </UnknownDescriptor>
+          childrenNodes={descriptorList}
+        />
       );
     }
   };
@@ -50,7 +72,7 @@ const DescriptorTable = ({rawData}) =>
   const descriptorList = TransformNodes( parsedDevice, 1 );
 
   return (
-    <div class="descriptorContainer">
+    <div className="descriptorContainer">
       <h1>Descriptors</h1>
       { descriptorList }
     </div>

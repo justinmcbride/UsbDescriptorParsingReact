@@ -1,13 +1,14 @@
 import React from 'react';
-
-import './UsbDescriptor.css';
+import _ from 'lodash';
 
 import Accordion from 'react-bootstrap/Accordion';
 import Badge from 'react-bootstrap/Badge';
 import Card from 'react-bootstrap/Card';
 import Table from 'react-bootstrap/Table'
 
-const UsbDescriptor = ( { children, node, index, childrenNodes } ) =>
+import './UsbDescriptor.css';
+
+const UsbDescriptor = ( { children, node, index, childrenNodes, title } ) =>
 {
   const verifiedElement = node.Verify()
     ? <Badge variant="success" className="float-right">Verified</Badge>
@@ -18,16 +19,25 @@ const UsbDescriptor = ( { children, node, index, childrenNodes } ) =>
     : null
   ;
 
+  const allValues = _.map(node.fields, (field, index) => {
+    return(
+      <tr key={index}>
+        <td>{field.field}</td>
+        <td>{node.retrieve(field.field)}</td>
+      </tr>
+    );
+  });
+
   return (
     <Card>
       <Accordion.Toggle as={Card.Header} eventKey={index}>
-        {node.type}{verifiedElement}{childrenElement}
+        {title}{verifiedElement}{childrenElement}
       </Accordion.Toggle>
       <Accordion.Collapse eventKey={index}>
         <Card.Body>
           <p>Data Length: {node.rawData.byteLength}</p>
           <p>Raw Data: [{`${node.rawData}`}]</p>
-          <Table striped bordered hover size="sm">
+          <Table bordered hover size="sm">
             <thead>
               <tr>
                 <th>Field</th>
@@ -35,6 +45,7 @@ const UsbDescriptor = ( { children, node, index, childrenNodes } ) =>
               </tr>
             </thead>
             <tbody>
+              { allValues }
               { children }
             </tbody>
           </Table>

@@ -54,7 +54,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <React.Fragment>
       <Dropzone onDrop={onDrop}>
         {({getRootProps, getInputProps}) => (
           <section>
@@ -64,24 +64,25 @@ const App = () => {
                 Import Data File
               </Button>
             </span>
+            <Download file="export.bin" content={ new Uint8Array(values) }>
+              <Button variant="outline-primary" size="lg" block>
+                Export Data
+              </Button>
+            </Download>
+            <div className="blockContainer">
+              <DataTable
+                valueChanged={onValueChanged}
+                dataValues={values}
+              />
+              <DescriptorTable
+                rawData={values}
+              />
+            </div>
           </section>
         )}
       </Dropzone>
-      <Download file="export.bin" content={ new Uint8Array(values) }>
-        <Button variant="outline-primary" size="lg" block>
-          Export Data
-        </Button>
-      </Download>
-      <div class="blockContainer">
-        <DataTable
-          valueChanged={onValueChanged}
-          dataValues={values}
-        />
-        <DescriptorTable
-          rawData={values}
-        />
-      </div>
-    </div>
+      
+    </React.Fragment>
   );
 }
 

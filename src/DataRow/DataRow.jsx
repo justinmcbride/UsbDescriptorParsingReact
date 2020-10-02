@@ -7,13 +7,10 @@ const DataRow = ({dataValues, baseIndexOfRow, valueChanged, rowIndex, displaySty
   const [whichHovered, setWhichHovered] = useState();
 
   const onMouseEnter = (index) => {
-    console.log( `app informed of mouseEnter on [${index}]`);
     setWhichHovered(index);
   };
 
   const onMouseLeave = (index) => {
-    // possible race condition here i guess?
-    console.log( `app informed of mouseLeave on [${index}]`);
     setWhichHovered(null);
   };
 
@@ -38,8 +35,13 @@ const DataRow = ({dataValues, baseIndexOfRow, valueChanged, rowIndex, displaySty
   });
 
   const emptySlots = rowSize - dataValues.length;
-  const remainingElements = _.map(_.range(emptySlots), () => {
-    return <td className="Value"></td>
+  const remainingElements = _.map(_.range(emptySlots), (index) => {
+    return (
+      <td
+        className="Value"
+        key={dataValues.length + index}
+      ></td>
+    );
   });
 
   valueElements.push(remainingElements);

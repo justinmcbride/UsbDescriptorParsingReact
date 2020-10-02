@@ -50,7 +50,9 @@ const DataTable = ({dataValues, valueChanged}) => {
       <div>
         <h1>{displayStyle}</h1>
         <table className="dataContainer">
-          { dataRows }
+          <tbody>
+            { dataRows }
+          </tbody>
         </table>
       </div>
     </div>
