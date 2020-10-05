@@ -141,7 +141,7 @@ const ParseFormatTree = ( currentNode, rawData, validChildren ) => {
         return currentOffset;
     }
 
-    const newChildNode = NodeFactory( thisDescriptor, UsbConstants.Class.Video.Class, UsbConstants.Class.Video.Subclass.VideoStreaming );
+    const newChildNode = NodeFactory( thisDescriptor, UsbConstants.Class.Video.value, UsbConstants.Class.Video.Subclass.VideoStreaming );
 
     currentNode.children.push( newChildNode );
     currentOffset += bLength;
