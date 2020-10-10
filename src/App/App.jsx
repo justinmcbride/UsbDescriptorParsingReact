@@ -83,7 +83,7 @@ const App = () => {
         </Nav>
         <Nav>
           <Navbar.Text>
-            Build: {process.env.REACT_APP_RUN_NUMBER || `TEST`}
+            Build: {process.env.REACT_APP_RUN_NUMBER || `XX`}
           </Navbar.Text>
         </Nav>
       </Navbar>

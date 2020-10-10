@@ -18,7 +18,6 @@ jobs:
       - name: Build Production Package
         run: |
           export REACT_APP_RUN_NUMBER=$GITHUB_RUN_NUMBER
-          env
           npm run-script build
       - name: Deploy to Server
         env:

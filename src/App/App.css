@@ -28,6 +28,4 @@ body {
 }
 
 .DataRow {
-  display: flex;
-  flex-direction: row;
 }
