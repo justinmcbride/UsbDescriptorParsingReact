@@ -18,7 +18,9 @@ jobs:
       - name: Build Production Package
         env:
           REACT_APP_RUN_NUMBER: ${{ env.GITHUB_RUN_NUMBER }}
-        run: npm run-script build
+        run: |
+          env
+          npm run-script build
       - name: Deploy to Server
         env:
           SSH_SERVER_KEY: ${{ secrets.SSH_SERVER_KEY }}
