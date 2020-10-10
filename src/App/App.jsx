@@ -42,7 +42,7 @@ const App = () => {
       reader.readAsArrayBuffer(file);
     })
   }, []);
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop});
+  const {getRootProps, getInputProps} = useDropzone({onDrop});
 
 
   const onValueChanged = (itemIndex, newValue) => {
