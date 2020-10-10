@@ -16,9 +16,8 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build Production Package
-        env:
-          REACT_APP_RUN_NUMBER: ${{ env.GITHUB_RUN_NUMBER }}
         run: |
+          export REACT_APP_RUN_NUMBER=$GITHUB_RUN_NUMBER
           env
           npm run-script build
       - name: Deploy to Server
