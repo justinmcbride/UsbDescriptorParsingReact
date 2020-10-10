@@ -59,8 +59,16 @@ export class UvcVsColorFormatDescriptor extends Usb.UsbBaseNode {
 // Video Control
 
 export class UvcVcHeaderDescriptor extends Usb.UsbBaseNode {
+  // UVC 1.1 -- 3.7.2 -- Table 3-3
   constructor( rawData ) {
     super( `Video Control Header`, rawData );
+    this.fields.push(
+      { field: `bDescriptorSubtype`, index: 2, size: 1, },
+      { field: `bcdUVC`, index: 3, size: 2, },
+      { field: `wTotalLength`, index: 5, size: 2, },
+      { field: `dwClockFrequency`, index: 7, size: 4, },
+      { field: `bInCollection`, index: 11, size: 1, },
+    );
   }
 };
 

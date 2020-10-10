@@ -172,7 +172,8 @@ export const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubcla
 
     // Some special cases
     if( newChildNode instanceof Usb.ConfigurationDescriptor
-        || newChildNode instanceof Uvc.UvcVsInputHeaderDescriptor ) {
+        || newChildNode instanceof Uvc.UvcVsInputHeaderDescriptor
+        || newChildNode instanceof Uvc.UvcVcHeaderDescriptor ) {
       // at this point, we need to recursively add wTotalLength data under the current node.
       // we also substract the length of this descriptor from wTotalLength
       const indexBegin = currentOffset + newChildNode.bLength();
