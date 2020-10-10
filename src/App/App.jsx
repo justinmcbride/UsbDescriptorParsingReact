@@ -1,11 +1,13 @@
 import React, { useState, useCallback } from 'react';
-import Dropzone from 'react-dropzone'
+import { useDropzone } from 'react-dropzone';
 import Download from '@axetroy/react-download';
 
-import Button from 'react-bootstrap/Button'
+import Button from 'react-bootstrap/Button';
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 
 import './App.css';
-import DataTable from '../DataTable/DataTable'
+import DataTable from '../DataTable/DataTable';
 import DescriptorTable from '../DescriptorTable/DescriptorTable';
 
 const NUMBER_OF_VALUES = 61;
@@ -39,8 +41,8 @@ const App = () => {
       }
       reader.readAsArrayBuffer(file);
     })
-    
   }, []);
+  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop});
 
 
   const onValueChanged = (itemIndex, newValue) => {
@@ -55,33 +57,46 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <Dropzone onDrop={onDrop}>
-        {({getRootProps, getInputProps}) => (
-          <section>
-            <span {...getRootProps()}>
-              <input {...getInputProps()} />
-              <Button variant="outline-primary" size="lg" block>
-                Import Data File
-              </Button>
-            </span>
-            <Download file="export.bin" content={ new Uint8Array(values) }>
-              <Button variant="outline-primary" size="lg" block>
-                Export Data
-              </Button>
-            </Download>
-            <div className="blockContainer">
-              <DataTable
-                valueChanged={onValueChanged}
-                dataValues={values}
-              />
-              <DescriptorTable
-                rawData={values}
-              />
-            </div>
-          </section>
-        )}
-      </Dropzone>
-      
+      <Navbar bg="primary" variant="light">
+        <Navbar.Brand href="#">
+          <img
+            alt=""
+            src="process.svg"
+            width="30"
+            height="30"
+            className="d-inline-block align-top"
+          />
+          USB Descriptor Parsing
+        </Navbar.Brand>
+        <Nav className="mr-auto">
+          <span {...getRootProps()}>
+            <input {...getInputProps()} />
+            <Button variant="outline-light" block>
+              Import Data File
+            </Button>
+          </span>
+          <Download file="export.bin" content={ new Uint8Array(values) }>
+            <Button variant="outline-light" block>
+              Export Data
+            </Button>
+          </Download>
+        </Nav>
+        <Nav>
+          <Navbar.Text>
+            Build: {process.env.GITHUB_RUN_NUMBER || `TEST`}
+          </Navbar.Text>
+        </Nav>
+      </Navbar>
+
+      <div className="blockContainer">
+        <DataTable
+          valueChanged={onValueChanged}
+          dataValues={values}
+        />
+        <DescriptorTable
+          rawData={values}
+        />
+      </div>
     </React.Fragment>
   );
 }
