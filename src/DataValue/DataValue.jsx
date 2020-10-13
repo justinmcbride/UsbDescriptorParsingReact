@@ -4,28 +4,28 @@ import './DataValue.css';
 
 const DataValue = ({index, value, displayStyle, mouseEnter, mouseLeave, valueChanged}) => {
   const [hovered, setHovered] = useState(false);
-  let className = hovered ? "ValueHovered " : "ValueNotHovered ";
+  let className = hovered ? `ValueHovered` : `ValueNotHovered`;
 
-  if( displayStyle === "ASCII" ) {
-    className += "ValueAscii";
+  if (displayStyle === `ASCII`) {
+    className += ` ValueAscii`;
   }
-  else if( displayStyle === "Hexadecimal" ) {
-    className += "ValueHex";
+  else if (displayStyle === `Hexadecimal`) {
+    className += ` ValueHex`;
   }
-  else if( displayStyle === "Decimal" ) {
-    className += "ValueDecimal";
+  else if (displayStyle === `Decimal`) {
+    className += ` ValueDecimal`;
   }
   
   const getDisplayValue = () => {
-    if( displayStyle === "ASCII" ) {
-      if( 32 <= value && value <= 126 ) {
+    if (displayStyle === `ASCII`) {
+      if (32 <= value && value <= 126) {
         return String.fromCharCode(value);
       }
       else {
-        return ".";
+        return `.`;
       }
     }
-    else if( displayStyle === "Hexadecimal" ) {
+    else if (displayStyle === `Hexadecimal`) {
       const minHex = Number(value).toString(16).toUpperCase();
       const finalHex = "00".substr(0, 2 - minHex.length) + minHex;
       return finalHex;
@@ -50,7 +50,16 @@ const DataValue = ({index, value, displayStyle, mouseEnter, mouseLeave, valueCha
 
   const handleInputChanged = (e) => {
     const newValue = e.target.value;
-    const asDecimal = newValue.charCodeAt();
+    let asDecimal = undefined;
+    if (displayStyle === `ASCII`) {
+      asDecimal = newValue.charCodeAt();
+    }
+    else if (displayStyle === `Hexadecimal`) {
+      asDecimal = asDecimal = parseInt(newValue, 16);
+    }
+    else {
+      asDecimal = Number(newValue);
+    }
     console.dir(`Value change: index=[${index}] newValue=[${newValue}] asDecimal=[${asDecimal}]`);
     valueChanged(index, asDecimal);
   }
