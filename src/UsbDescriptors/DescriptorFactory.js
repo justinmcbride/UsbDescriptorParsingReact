@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import UsbConstants from './UsbConstants';
 
 import * as Usb from './UsbNodes';
@@ -117,33 +119,72 @@ const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
   }
 };
 
-const ParseFormatTree = ( currentNode, rawData, validChildren ) => {
+const ParseDescriptors = (currentNode, rawData, interfaceClass = 0, interfaceSubclass = 0) => {
   const dataView = new Uint8Array( rawData );
-  for( let currentOffset = 0; currentOffset < dataView.length; ) {
-    if( currentOffset + 2 >= dataView.length ) {
-      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
+  for (let currentOffset = 0; currentOffset < dataView.length;) {
+    if (currentOffset + 2 >= dataView.length) {
+      console.log(`Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]`);
       return currentOffset;
     }
 
     const bLength = dataView[currentOffset + 0];
     const bDescriptorType = dataView[currentOffset + 1];
 
-    if( currentOffset + bLength > dataView.length ) {
-      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
+    if (currentOffset + bLength > dataView.length) {
+      console.log(`Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]`);
       return currentOffset;
     }
 
-    const thisDescriptor = dataView.slice( currentOffset, currentOffset + bLength );
-    const bDescriptorSubType = thisDescriptor[2];
-    if( bDescriptorType !== UsbConstants.Class.Video.DescriptorType.Interface || !validChildren.includes( bDescriptorSubType ) )
-    {
-        // probably a sibling for the format
+    const thisDescriptor = dataView.slice(currentOffset, currentOffset + bLength);
+    const bDescriptorSubType = thisDescriptor[2]; // TODO: this is not always valid... needs to be an interface descriptor; maybe just null if not?
+
+    const newChildNode = NodeFactory(thisDescriptor, interfaceClass, interfaceSubclass);
+    if (currentNode.validChildren.length > 0) {
+      const newNodeIsValidChild = _.some(currentNode.validChildren, {type: bDescriptorType, subtype: bDescriptorSubType});
+      // we're looking for children of `currentNode`. so if we're in a loop where we're told 
+      // that there are children to look for, and this is NOT a child of the type to look for,
+      // we stop processing in this loop.
+
+      // const matchingChildren = _.intersectionWith(validChildren, currentNode.validChildren, _.isEqual);
+      // const newNodeIsValidChild = !(.empty());
+      // probably a sibling for the format
+      if (!newNodeIsValidChild) {
+        console.log(`not child: validChildren=${currentNode.validChildren} thisOne=[${bDescriptorType},${bDescriptorSubType}]`);
         return currentOffset;
+      }
     }
 
-    const newChildNode = NodeFactory( thisDescriptor, UsbConstants.Class.Video.value, UsbConstants.Class.Video.Subclass.VideoStreaming );
+    // Some special cases
+    if (newChildNode instanceof Usb.ConfigurationDescriptor
+     || newChildNode instanceof Uvc.UvcVsInputHeaderDescriptor
+     || newChildNode instanceof Uvc.UvcVcHeaderDescriptor) {
+      // at this point, we need to recursively add wTotalLength data under the current node.
+      // we also substract the length of this descriptor from wTotalLength
+      const indexBegin = currentOffset + newChildNode.bLength();
+      const childDataLength = newChildNode.retrieve(`wTotalLength`) - newChildNode.bLength();
+      const indexEnd = indexBegin + childDataLength;
 
-    currentNode.children.push( newChildNode );
+      const childData = dataView.slice(indexBegin, indexEnd);
+
+      ParseDescriptors(newChildNode, childData, interfaceClass, interfaceSubclass);
+      currentOffset += childDataLength;
+    }
+    else if (newChildNode instanceof Usb.InterfaceDescriptor) {
+      // further parsing needs to know the context of which usb class we're operating in
+      interfaceClass = newChildNode.retrieve(`bInterfaceClass`);
+      interfaceSubclass = newChildNode.retrieve(`bInterfaceSubClass`);
+      console.log(`New context: interfaceClass=[${interfaceClass}] interfaceSubclass=[${interfaceSubclass}]`);
+    }
+
+    // if the newChildNode has potential children under it, we want to process those before
+    // moving on.
+    if (newChildNode.validChildren.length > 0) {
+      const childData = dataView.slice(currentOffset + newChildNode.bLength());
+      const childrenLength = ParseDescriptors(newChildNode, childData, interfaceClass, interfaceSubclass);
+      currentOffset += childrenLength;
+    }
+
+    currentNode.children.push(newChildNode);
     currentOffset += bLength;
   }
   
@@ -151,60 +192,18 @@ const ParseFormatTree = ( currentNode, rawData, validChildren ) => {
   return rawData.length;
 };
 
-export const ParseTree = ( currentNode, rawData, interfaceClass, interfaceSubclass ) => {
-  const dataView = new Uint8Array( rawData );
-  for( let currentOffset = 0; currentOffset < dataView.length; ) {
-    if( currentOffset + 2 >= dataView.length ) {
-      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
-      return;
-    }
+export const ParseTree = (rawData) => {
+  const dataView = new Uint8Array(rawData);
+  const rootNode = new Usb.RootNode();
 
-    const bLength = dataView[currentOffset + 0];
-    // const bDescriptorType = dataView[currentOffset + 1];
+  for (let currentOffset = 0; currentOffset < dataView.length;) {
+    const remainingData = dataView.slice(currentOffset);
+    const consumedLength = ParseDescriptors(rootNode, remainingData);
 
-    if( currentOffset + bLength > dataView.length ) {
-      console.log( `Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]` );
-      return;
-    }
+    if (consumedLength === 0) break;
 
-    const thisDescriptor = dataView.slice( currentOffset, currentOffset + bLength );
-    const newChildNode = NodeFactory( thisDescriptor, interfaceClass, interfaceSubclass );
-
-    // Some special cases
-    if( newChildNode instanceof Usb.ConfigurationDescriptor
-        || newChildNode instanceof Uvc.UvcVsInputHeaderDescriptor
-        || newChildNode instanceof Uvc.UvcVcHeaderDescriptor ) {
-      // at this point, we need to recursively add wTotalLength data under the current node.
-      // we also substract the length of this descriptor from wTotalLength
-      const indexBegin = currentOffset + newChildNode.bLength();
-      const childDataLength = newChildNode.retrieve(`wTotalLength`) - newChildNode.bLength();
-      const indexEnd = indexBegin + childDataLength;
-
-      const childData = dataView.slice( indexBegin, indexEnd );
-
-      ParseTree( newChildNode, childData, interfaceClass, interfaceSubclass );
-      currentOffset += childDataLength;
-    }
-    else if( newChildNode instanceof Usb.InterfaceDescriptor ) {
-      // further parsing needs to know the context of which usb class we're operating in
-      interfaceClass = newChildNode.retrieve(`bInterfaceClass`);
-      interfaceSubclass = newChildNode.retrieve(`bInterfaceSubClass`);
-      console.log( `New context: interfaceClass=[${interfaceClass}] interfaceSubclass=[${interfaceSubclass}]` );
-    }
-    else if( newChildNode instanceof Uvc.UvcVsFormatUncompressedDescriptor ) {
-      const childData = dataView.slice( currentOffset + newChildNode.bLength() );
-      const validChildren = [UsbConstants.Class.Video.VsDescriptorSubType.FrameUncompressed, UsbConstants.Class.Video.VsDescriptorSubType.ColorFormat ];
-      const childrenLength = ParseFormatTree( newChildNode, childData, validChildren );
-      currentOffset += childrenLength;
-    }
-    else if( newChildNode instanceof Uvc.UvcVsFormatMjpegDescriptor ) {
-      const childData = dataView.slice( currentOffset + newChildNode.bLength() );
-      const validChildren = [UsbConstants.Class.Video.VsDescriptorSubType.FrameMjpeg, UsbConstants.Class.Video.VsDescriptorSubType.ColorFormat ];
-      const childrenLength = ParseFormatTree( newChildNode, childData, validChildren );
-      currentOffset += childrenLength;
-    }
-
-    currentNode.children.push( newChildNode );
-    currentOffset += bLength;
+    currentOffset += consumedLength;
   }
+
+  return rootNode;
 }

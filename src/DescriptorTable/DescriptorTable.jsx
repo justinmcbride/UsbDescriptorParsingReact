@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import _ from 'lodash';
 
 import Accordion from 'react-bootstrap/Accordion';
@@ -7,16 +7,13 @@ import UnknownDescriptor from '../UsbDescriptors/UnknownDescriptor';
 import DeviceDescriptor from '../UsbDescriptors/DeviceDescriptor';
 import InterfaceDescriptor from '../UsbDescriptors/InterfaceDescriptor';
 import { ParseTree } from '../UsbDescriptors/DescriptorFactory';
-import { RootNode } from '../UsbDescriptors/UsbNodes';
 
 import './DescriptorTable.css';
-import { useEffect } from 'react';
 
 const DescriptorTable = ({rawData}) =>
 {
   // return null;
-  const parsedDevice = new RootNode();
-  ParseTree( parsedDevice, rawData );
+  const parsedDevice = ParseTree(rawData);
 
   useEffect(() => {
     const output = parsedDevice.PrintTreeFromHere(0);

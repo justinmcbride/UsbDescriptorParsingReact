@@ -6,6 +6,7 @@ export class TreeNode {
   constructor(type) {
     this.children = [];
     this.type = type ?? "Unknown TreeNode";
+    this.validChildren = [];
   }
 
   Print = () => {

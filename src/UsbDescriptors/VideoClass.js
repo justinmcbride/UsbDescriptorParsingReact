@@ -1,10 +1,11 @@
 import * as Usb from './UsbNodes';
+import UsbConstants from './UsbConstants';
 
 // Video Streaming
 
 export class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( `Video Streaming Input Header`, rawData );
+    super( `Video Streaming Header`, rawData );
     this.fields.push(
       { field: `bDescriptorSubtype`, index: 2, size: 1, },
       { field: `bNumFormats`, index: 3, size: 1, },
@@ -23,6 +24,16 @@ export class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
 export class UvcVsFormatUncompressedDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Format Uncompressed`, rawData );
+    this.validChildren.push(
+      {
+        type: UsbConstants.Class.Video.DescriptorType.Interface,
+        subtype: UsbConstants.Class.Video.VsDescriptorSubType.FrameUncompressed,
+      },
+      {
+        type: UsbConstants.Class.Video.DescriptorType.Interface,
+        subtype: UsbConstants.Class.Video.VsDescriptorSubType.ColorFormat,
+      },
+    );
   }
 };
 
@@ -35,6 +46,16 @@ export class UvcVsFrameUncompressedDescriptor extends Usb.UsbBaseNode {
 export class UvcVsFormatMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Format Mjpeg`, rawData );
+    this.validChildren.push(
+      {
+        type: UsbConstants.Class.Video.DescriptorType.Interface,
+        subtype: UsbConstants.Class.Video.VsDescriptorSubType.FrameMjpeg,
+      },
+      {
+        type: UsbConstants.Class.Video.DescriptorType.Interface,
+        subtype: UsbConstants.Class.Video.VsDescriptorSubType.ColorFormat,
+      },
+    );
   }
 };
 
