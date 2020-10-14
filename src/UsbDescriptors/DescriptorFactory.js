@@ -134,30 +134,38 @@ const ParseDescriptors = (currentNode, rawData, interfaceClass = 0, interfaceSub
       console.log(`Dangling data: currentOffset=[${currentOffset}] dataView.length=[${dataView.length}]`);
       return currentOffset;
     }
+    if (bLength === 0) {
+      console.log(`Bad data: bLength=0`);
+      return currentOffset;
+    }
 
     const thisDescriptor = dataView.slice(currentOffset, currentOffset + bLength);
     const bDescriptorSubType = thisDescriptor[2]; // TODO: this is not always valid... needs to be an interface descriptor; maybe just null if not?
 
     const newChildNode = NodeFactory(thisDescriptor, interfaceClass, interfaceSubclass);
     if (currentNode.validChildren.length > 0) {
-      const newNodeIsValidChild = _.some(currentNode.validChildren, {type: bDescriptorType, subtype: bDescriptorSubType});
       // we're looking for children of `currentNode`. so if we're in a loop where we're told 
       // that there are children to look for, and this is NOT a child of the type to look for,
       // we stop processing in this loop.
 
-      // const matchingChildren = _.intersectionWith(validChildren, currentNode.validChildren, _.isEqual);
-      // const newNodeIsValidChild = !(.empty());
-      // probably a sibling for the format
+      const newNodeIsValidChild = _.some(currentNode.validChildren, {type: bDescriptorType, subtype: bDescriptorSubType});
       if (!newNodeIsValidChild) {
         console.log(`not child: validChildren=${currentNode.validChildren} thisOne=[${bDescriptorType},${bDescriptorSubType}]`);
         return currentOffset;
       }
     }
 
-    // Some special cases
-    if (newChildNode instanceof Usb.ConfigurationDescriptor
-     || newChildNode instanceof Uvc.UvcVsInputHeaderDescriptor
-     || newChildNode instanceof Uvc.UvcVcHeaderDescriptor) {
+    if (newChildNode instanceof Usb.InterfaceDescriptor) {
+      // further parsing needs to know the context of which usb class we're operating in
+      interfaceClass = newChildNode.retrieve(`bInterfaceClass`);
+      interfaceSubclass = newChildNode.retrieve(`bInterfaceSubClass`);
+      console.log(`New context: interfaceClass=[${interfaceClass}] interfaceSubclass=[${interfaceSubclass}]`);
+    }
+
+    // iIf the newChildNode has potential children under it, we want to process those before
+    // moving on. Some descriptors have a wTotalLength field which specifies
+    // the length of any children that exist under it.
+    if (newChildNode.retrieve(`wTotalLength`)) {
       // at this point, we need to recursively add wTotalLength data under the current node.
       // we also substract the length of this descriptor from wTotalLength
       const indexBegin = currentOffset + newChildNode.bLength();
@@ -166,18 +174,14 @@ const ParseDescriptors = (currentNode, rawData, interfaceClass = 0, interfaceSub
 
       const childData = dataView.slice(indexBegin, indexEnd);
 
-      ParseDescriptors(newChildNode, childData, interfaceClass, interfaceSubclass);
-      currentOffset += childDataLength;
+      const consumedData = ParseDescriptors(newChildNode, childData, interfaceClass, interfaceSubclass);
+      if (consumedData !== childDataLength) {
+        const error = `Did not consume wTotalLength! consumed=[${consumedData}] wTotalLength=[${childDataLength}]`;
+        console.log(error);
+        newChildNode.errors.push(error);
+      }
+      currentOffset += consumedData;
     }
-    else if (newChildNode instanceof Usb.InterfaceDescriptor) {
-      // further parsing needs to know the context of which usb class we're operating in
-      interfaceClass = newChildNode.retrieve(`bInterfaceClass`);
-      interfaceSubclass = newChildNode.retrieve(`bInterfaceSubClass`);
-      console.log(`New context: interfaceClass=[${interfaceClass}] interfaceSubclass=[${interfaceSubclass}]`);
-    }
-
-    // if the newChildNode has potential children under it, we want to process those before
-    // moving on.
     if (newChildNode.validChildren.length > 0) {
       const childData = dataView.slice(currentOffset + newChildNode.bLength());
       const childrenLength = ParseDescriptors(newChildNode, childData, interfaceClass, interfaceSubclass);

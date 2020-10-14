@@ -63,6 +63,7 @@ export class UsbBaseNode extends TreeNode {
       { field: `bLength`, index: 0, size: 1, },
       { field: `bDescriptorType`, index: 1, size: 1, },
     ];
+    this.errors = [];
   }
 
   retrieve = ( field ) => {
@@ -109,8 +110,12 @@ export class UsbBaseNode extends TreeNode {
     ;
   }
 
+  HasErrors = () => {
+    return (this.errors.length > 0);
+  }
+
   Verify = () => {
-    return false;
+    return this.HasErrors() && false;
   }
 };
 
@@ -169,7 +174,8 @@ export class ConfigurationDescriptor extends UsbBaseNode {
 
   Verify = () => {
     // TODO: verify structure is correct
-    if( this.rawData.byteLength !== 9 ) return false;
+    if (this.rawData.byteLength !== 9) return false;
+    if (this.HasErrors()) return false;
     return true;
   }
 }
