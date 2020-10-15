@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import _ from 'lodash';
 
 import Accordion from 'react-bootstrap/Accordion';
@@ -15,18 +15,12 @@ const DescriptorTable = ({rawData}) =>
   // return null;
   const parsedDevice = ParseTree(rawData);
 
-  useEffect(() => {
-    const output = parsedDevice.PrintTreeFromHere(0);
-    console.log( `-----------Parsed-----------` );
-    console.log( output );
-  });
-
   const TransformNodes = (node, index) => {
     const descriptorList = _.map(node.children, (childNode, index) => {
-      return TransformNodes( childNode, index+1 );
+      return TransformNodes(childNode, index+1);
     });
 
-    if( node.type === "Root" ) {
+    if (node.type === `Root`) {
       // don't create a card for root
       return (
         <Accordion>
@@ -34,7 +28,7 @@ const DescriptorTable = ({rawData}) =>
         </Accordion>
       );
     }
-    else if( node.type === `Device` ) {
+    else if (node.type === `Device`) {
       return (
         <DeviceDescriptor
           node={node}
@@ -44,7 +38,7 @@ const DescriptorTable = ({rawData}) =>
         />
       );
     }
-    else if( node.type === `Interface` ) {
+    else if (node.type === `Interface`) {
       return (
         <InterfaceDescriptor
           node={node}
@@ -66,7 +60,7 @@ const DescriptorTable = ({rawData}) =>
     }
   };
 
-  const descriptorList = TransformNodes( parsedDevice, 1 );
+  const descriptorList = TransformNodes(parsedDevice, 1);
 
   return (
     <div className="descriptorContainer">

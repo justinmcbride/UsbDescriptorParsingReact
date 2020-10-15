@@ -66,11 +66,18 @@ export class UsbBaseNode extends TreeNode {
     this.errors = [];
   }
 
+  HasField = ( field ) => {
+    const fieldItem = _.find( this.fields, { field: field } );
+    if( !fieldItem || fieldItem === null ) {
+      return false;
+    }
+    return true;
+  }
+
   retrieve = ( field ) => {
     const fieldItem = _.find( this.fields, { field: field } );
     if( !fieldItem || fieldItem === null ) {
       console.error( `Couldn't find field=[${field}]` );
-      debugger;
       return null;
     }
 
@@ -191,6 +198,13 @@ export class InterfaceDescriptor extends UsbBaseNode {
       { field: `bInterfaceSubClass`, index: 6, size: 1, },
       { field: `bInterfaceProtocol`, index: 7, size: 1, },
       { field: `iInterface`, index: 8, size: 1, },
+    );
+
+    this.validChildren.push(
+      {
+        type: UsbConstants.DescriptorType.Endpoint,
+        subtype: null,
+      },
     );
 
     const classValue = _.find(UsbConstants.Class, (item) => {

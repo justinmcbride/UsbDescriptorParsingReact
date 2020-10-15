@@ -140,7 +140,6 @@ const ParseDescriptors = (currentNode, rawData, interfaceClass = 0, interfaceSub
     }
 
     const thisDescriptor = dataView.slice(currentOffset, currentOffset + bLength);
-    const bDescriptorSubType = thisDescriptor[2]; // TODO: this is not always valid... needs to be an interface descriptor; maybe just null if not?
 
     const newChildNode = NodeFactory(thisDescriptor, interfaceClass, interfaceSubclass);
     if (currentNode.validChildren.length > 0) {
@@ -148,9 +147,18 @@ const ParseDescriptors = (currentNode, rawData, interfaceClass = 0, interfaceSub
       // that there are children to look for, and this is NOT a child of the type to look for,
       // we stop processing in this loop.
 
-      const newNodeIsValidChild = _.some(currentNode.validChildren, {type: bDescriptorType, subtype: bDescriptorSubType});
-      if (!newNodeIsValidChild) {
-        console.log(`not child: validChildren=${currentNode.validChildren} thisOne=[${bDescriptorType},${bDescriptorSubType}]`);
+      let subtype = null;
+      if (newChildNode instanceof Usb.InterfaceDescriptor) {
+        subtype = thisDescriptor[2];
+      }
+
+      const newNodeIsValidChild = _.some(currentNode.validChildren, {type: bDescriptorType, subtype});
+
+      // we can't list all children, so we want to prioritize descriptors that
+      // tell us that they have some children under them that we may not
+      // know about
+      if (!newNodeIsValidChild && !newChildNode.HasField(`wTotalLength`)) {
+        console.log(`Not child: validChildren=${JSON.stringify(currentNode.validChildren)} thisOne=[${bDescriptorType},${subtype}]`);
         return currentOffset;
       }
     }
@@ -159,13 +167,12 @@ const ParseDescriptors = (currentNode, rawData, interfaceClass = 0, interfaceSub
       // further parsing needs to know the context of which usb class we're operating in
       interfaceClass = newChildNode.retrieve(`bInterfaceClass`);
       interfaceSubclass = newChildNode.retrieve(`bInterfaceSubClass`);
-      console.log(`New context: interfaceClass=[${interfaceClass}] interfaceSubclass=[${interfaceSubclass}]`);
     }
 
     // iIf the newChildNode has potential children under it, we want to process those before
     // moving on. Some descriptors have a wTotalLength field which specifies
     // the length of any children that exist under it.
-    if (newChildNode.retrieve(`wTotalLength`)) {
+    if (newChildNode.HasField(`wTotalLength`)) {
       // at this point, we need to recursively add wTotalLength data under the current node.
       // we also substract the length of this descriptor from wTotalLength
       const indexBegin = currentOffset + newChildNode.bLength();

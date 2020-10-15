@@ -6,25 +6,13 @@ import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 
-import './App.css';
 import DataTable from '../DataTable/DataTable';
 import DescriptorTable from '../DescriptorTable/DescriptorTable';
 
-const NUMBER_OF_VALUES = 61;
-
-const CreateFakeData = () => {
-  const data = [];
-
-  const baseValue = 33;
-  for (let index = 0; index < NUMBER_OF_VALUES; ++index) {
-    data.push(baseValue + index);
-  }
-
-  return data;
-}
+import './App.css';
 
 const App = () => {
-  const [values, setValues] = useState(CreateFakeData());
+  const [values, setValues] = useState([]);
   
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.forEach((file) => {
