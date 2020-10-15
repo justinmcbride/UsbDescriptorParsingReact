@@ -42,19 +42,18 @@ const DataTable = ({dataValues, valueChanged}) => {
 
   return (
     <div>
+      <h1>{displayStyle}</h1>
       <ToggleButtonGroup name="dataType" type="radio" defaultValue={"Hexadecimal"} onChange={onDisplayStyleChange}>
-        <ToggleButton value={"Decimal"}>Decimal</ToggleButton>
-        <ToggleButton value={"Hexadecimal"}>Hex</ToggleButton>
-        <ToggleButton value={"ASCII"}>ASCII</ToggleButton>
+        <ToggleButton variant="info" value={"Decimal"}>Decimal</ToggleButton>
+        <ToggleButton variant="info" value={"Hexadecimal"}>Hex</ToggleButton>
+        <ToggleButton variant="info" value={"ASCII"}>ASCII</ToggleButton>
       </ToggleButtonGroup>
-      <div>
-        <h1>{displayStyle}</h1>
-        <table className="dataContainer">
-          <tbody>
-            { dataRows }
-          </tbody>
-        </table>
-      </div>
+
+      <table className="dataContainer">
+        <tbody>
+          { dataRows }
+        </tbody>
+      </table>
     </div>
   );
 };

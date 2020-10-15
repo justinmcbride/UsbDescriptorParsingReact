@@ -4,18 +4,8 @@ import './DataValue.css';
 
 const DataValue = ({index, value, displayStyle, mouseEnter, mouseLeave, valueChanged}) => {
   const [hovered, setHovered] = useState(false);
-  let className = hovered ? `ValueHovered` : `ValueNotHovered`;
+  const className = hovered ? `Value ValueHovered` : `Value ValueNotHovered`;
 
-  if (displayStyle === `ASCII`) {
-    className += ` ValueAscii`;
-  }
-  else if (displayStyle === `Hexadecimal`) {
-    className += ` ValueHex`;
-  }
-  else if (displayStyle === `Decimal`) {
-    className += ` ValueDecimal`;
-  }
-  
   const getDisplayValue = () => {
     if (displayStyle === `ASCII`) {
       if (32 <= value && value <= 126) {

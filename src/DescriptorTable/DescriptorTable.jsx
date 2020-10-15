@@ -12,7 +12,6 @@ import './DescriptorTable.css';
 
 const DescriptorTable = ({rawData}) =>
 {
-  // return null;
   const parsedDevice = ParseTree(rawData);
 
   const TransformNodes = (node, index) => {

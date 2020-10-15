@@ -8,20 +8,5 @@
 
 .Value {
   width: 40px;
-  padding: 5px;
-}
-
-.ValueAscii {
-  width: 29px;
-  text-align: center;
-}
-
-.ValueHex {
-  width: 36px;
-  text-align: center;
-}
-
-.ValueDecimal {
-  width: 36px;
   text-align: center;
 }
