@@ -157,7 +157,7 @@ const ParseDescriptors = (currentNode, rawData, interfaceClass = 0, interfaceSub
       // we can't list all children, so we want to prioritize descriptors that
       // tell us that they have some children under them that we may not
       // know about
-      if (!newNodeIsValidChild && !newChildNode.HasField(`wTotalLength`)) {
+      if (!newNodeIsValidChild && !currentNode.HasField(`wTotalLength`)) {
         console.log(`Not child: validChildren=${JSON.stringify(currentNode.validChildren)} thisOne=[${bDescriptorType},${subtype}]`);
         return currentOffset;
       }
