@@ -148,8 +148,8 @@ const ParseDescriptors = (currentNode, rawData, interfaceClass = 0, interfaceSub
       // we stop processing in this loop.
 
       let subtype = null;
-      if (newChildNode instanceof Usb.InterfaceDescriptor) {
-        subtype = thisDescriptor[2];
+      if (newChildNode.HasField(`bDescriptorSubtype`)) {
+        subtype = newChildNode.retrieve(`bDescriptorSubtype`);
       }
 
       const newNodeIsValidChild = _.some(currentNode.validChildren, {type: bDescriptorType, subtype});

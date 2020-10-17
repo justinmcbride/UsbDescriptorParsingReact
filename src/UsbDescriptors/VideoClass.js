@@ -24,6 +24,9 @@ export class UvcVsInputHeaderDescriptor extends Usb.UsbBaseNode {
 export class UvcVsFormatUncompressedDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Format Uncompressed`, rawData );
+    this.fields.push(
+      { field: `bDescriptorSubtype`, index: 2, size: 1, },
+    );
     this.validChildren.push(
       {
         type: UsbConstants.Class.Video.DescriptorType.Interface,
@@ -40,12 +43,18 @@ export class UvcVsFormatUncompressedDescriptor extends Usb.UsbBaseNode {
 export class UvcVsFrameUncompressedDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Frame Uncompressed`, rawData );
+    this.fields.push(
+      { field: `bDescriptorSubtype`, index: 2, size: 1, },
+    );
   }
 };
 
 export class UvcVsFormatMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Format Mjpeg`, rawData );
+    this.fields.push(
+      { field: `bDescriptorSubtype`, index: 2, size: 1, },
+    );
     this.validChildren.push(
       {
         type: UsbConstants.Class.Video.DescriptorType.Interface,
@@ -62,6 +71,9 @@ export class UvcVsFormatMjpegDescriptor extends Usb.UsbBaseNode {
 export class UvcVsFrameMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
     super( `Video Streaming Frame Mjpeg`, rawData );
+    this.fields.push(
+      { field: `bDescriptorSubtype`, index: 2, size: 1, },
+    );
   }
 };
 
