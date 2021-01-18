@@ -51,7 +51,7 @@ export class UvcVsFrameUncompressedDescriptor extends Usb.UsbBaseNode {
 
 export class UvcVsFormatMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( `Video Streaming Format Mjpeg`, rawData );
+    super( `Video Streaming Format MJPEG`, rawData );
     this.fields.push(
       { field: `bDescriptorSubtype`, index: 2, size: 1, },
     );
@@ -70,9 +70,18 @@ export class UvcVsFormatMjpegDescriptor extends Usb.UsbBaseNode {
 
 export class UvcVsFrameMjpegDescriptor extends Usb.UsbBaseNode {
   constructor( rawData ) {
-    super( `Video Streaming Frame Mjpeg`, rawData );
+    super( `Video Streaming Frame MJPEG`, rawData );
     this.fields.push(
       { field: `bDescriptorSubtype`, index: 2, size: 1, },
+      { field: `bFrameIndex`, index: 3, size: 1, },
+      { field: `bmCapabilities`, index: 4, size: 1, },
+      { field: `wWidth`, index: 5, size: 2, },
+      { field: `wHeight`, index: 7, size: 2, },
+      { field: `dwMinBitRate`, index: 9, size: 4, },
+      { field: `dwMaxBitRate`, index: 13, size: 4, },
+      { field: `dwMaxVideoFrameBufferSize`, index: 17, size: 4, },
+      { field: `dwDefaultFrameInterval`, index: 21, size: 4, },
+      { field: `bFrameIntervalType`, index: 25, size: 1, },
     );
   }
 };
