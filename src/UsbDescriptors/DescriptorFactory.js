@@ -91,26 +91,40 @@ const NodeFactory = ( rawData, interfaceClass, interfaceSubclass ) => {
           if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.Header ) {
             return new Uac.UacAcHeaderDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.InputTerminal ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.InputTerminal ) {
             return new Uac.UacAcInputTerminalDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.OutputTerminal ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.OutputTerminal ) {
             return new Uac.UacAcOutputTerminalDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.MixerUnit ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.MixerUnit ) {
             return new Uac.UacAcMixerUnitDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.SelectorUnit ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.SelectorUnit ) {
             return new Uac.UacAcSelectorUnitDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.FeatureUnit ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.FeatureUnit ) {
             return new Uac.UacAcFeatureUnitDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.ProcessingUnit ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.ProcessingUnit ) {
             return new Uac.UacAcProcessingUnitDescriptor( rawData );
           }
-          else if( bDescriptorSubType === UsbConstants.Class.Video.VcDescriptorSubType.ExtensionUnit ) {
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AcDescriptorSubType.ExtensionUnit ) {
             return new Uac.UacAcExtensionUnitDescriptor( rawData );
+          }
+        }
+        else if( interfaceSubclass === UsbConstants.Class.Audio.Subclass.AudioStreaming ) {
+          if( bDescriptorSubType === UsbConstants.Class.Audio.AsDescriptorSubType.Undefined ) {
+            return new Uac.UacAcHeaderDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AsDescriptorSubType.General ) {
+            return new Uac.UacAcInputTerminalDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AsDescriptorSubType.FormatType ) {
+            return new Uac.UacAcOutputTerminalDescriptor( rawData );
+          }
+          else if( bDescriptorSubType === UsbConstants.Class.Audio.AsDescriptorSubType.FormatSpecific ) {
+            return new Uac.UacAcOutputTerminalDescriptor( rawData );
           }
         }
       }
