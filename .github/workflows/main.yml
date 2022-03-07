@@ -1,30 +1,17 @@
-name: CI
+name: Deploy to Heroku
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: npm install
-      - name: Build Production Package
-        run: |
-          export REACT_APP_RUN_NUMBER=$GITHUB_RUN_NUMBER
-          npm run-script build
-      - name: Deploy to Server
-        env:
-          SSH_SERVER_KEY: ${{ secrets.SSH_SERVER_KEY }}
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan mcbride.io > ~/.ssh/known_hosts
-          echo "$SSH_SERVER_KEY" > key.key
-          chmod  400 key.key
-          scp -i key.key -r build/* ubuntu@mcbride.io:/var/www/mcbride.io/usb-descriptors
+      - uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "react-usb-descriptors"
+          heroku_email: "justin@mcbride.io"
